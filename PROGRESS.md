@@ -43,7 +43,13 @@ Verified: ran the validator logic against the committed protocol schema, operati
 Memory: no firmware changed; image size and heap not measured.
 Next: T-103 Board profile and pin validator is next by backlog order; T-104 Firmware core skeleton is also eligible but T-103 precedes it. T-105 depends on both T-102 and T-104.
 
-### T-103 Board profile and pin validator (2026-11-10) status: doing
+### T-103 Board profile and pin validator (2026-11-10) status: blocked
 Goal: encode the ESP-WROOM-32 38-pin GPIO safety classes in a data-driven profile and provide a validator that returns allow/warn/block with a reason.
 Done when: profile represents blocked, strapping, console, input-only, ADC1, ADC2, DAC and general GPIO classes; validator covers mode/write/PWM/ADC decisions; tests cover each class; owner confirms the physical board labels against a board photo/silkscreen.
 Files: `firmware/boards/`, `tools/` only.
+
+Changed: added `firmware/boards/esp32-wroom-38pin.json` with available GPIO identifiers and blocked, strapping, console, input-only, ADC1, ADC2, DAC and general classes; added `tools/validate_pins.py` returning allow/warn/block with a reason for mode/write/PWM/ADC/DAC; added unit tests for each policy class. Profile explicitly distinguishes GPIO identifiers from physical header positions and marks physical mapping unverified.
+Verified: ran `python -m unittest discover -s tools/tests -v` in an isolated local mirror of the committed files. Output: 11 tests passed, 0 failures. Covered flash/unavailable GPIO, console, strapping confirmation, input-only restrictions, ADC1 with Wi-Fi, ADC2 with/without Wi-Fi, DAC and general GPIO. No hardware was connected.
+Blocker: acceptance requires owner verification of the physical board's 38-pin silkscreen/header mapping. The project context contains no board photo, so physical labels are not guessed. Please provide a clear photo of both sides of the exact ESP-WROOM-32 38-pin board (or a pinout image matching its exact revision) to complete this check.
+Memory: no firmware changed; image size and heap not measured.
+Next: T-104 Firmware core skeleton is the next eligible task because it depends only on T-101. T-103 remains blocked until the owner confirms the board labels.
