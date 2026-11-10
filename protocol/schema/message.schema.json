@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://demoncore.dev/protocol/v1/message.schema.json",
+  "title": "DCP v1 message",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "v",
+    "id",
+    "src",
+    "dst",
+    "t",
+    "op",
+    "args"
+  ],
+  "properties": {
+    "v": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+$"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{16,32}$"
+    },
+    "src": {
+      "type": "string",
+      "pattern": "^node:[1-9][0-9]{0,19}$"
+    },
+    "dst": {
+      "type": "string",
+      "anyOf": [
+        {
+          "const": "*"
+        },
+        {
+          "pattern": "^node:[1-9][0-9]{0,19}$"
+        },
+        {
+          "pattern": "^(group|tag|cell):[a-z][a-z0-9_-]{0,31}$"
+        }
+      ]
+    },
+    "t": {
+      "enum": [
+        "req",
+        "res",
+        "evt"
+      ]
+    },
+    "op": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$",
+      "maxLength": 64
+    },
+    "args": {
+      "type": "object",
+      "maxProperties": 64
+    }
+  }
+}

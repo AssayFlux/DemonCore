@@ -1,0 +1,12 @@
+# Reproducible upstream firmware toolchain pins for DemonCore.
+micropython_repository=https://github.com/micropython/micropython.git
+micropython_tag=v1.29.0
+micropython_commit=0fd6c573ea815774668bbb16b8e197c8822368b2
+micropython_license=MIT
+esp_idf_repository=https://github.com/espressif/esp-idf.git
+esp_idf_tag=v5.5.2
+esp_idf_commit=30aaf64524299d3bde422ca9a2848090d1bc5d0f
+board=ESP32_GENERIC
+board_variant=OTA
+target=ESP32
+flash_size=4MB
