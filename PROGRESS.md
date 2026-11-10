@@ -128,3 +128,8 @@ Changed: replaced numeric `v: 1` values in valid vectors with the specified stri
 Verified: parsed the edited JSON and confirmed all valid vectors use `"1.0"`; 23 valid vectors retained. Full schema/operation validation will be exercised by the T-105 CI vector job.
 Memory: no firmware changes.
 Next: T-105 DCP codec in firmware.
+
+### T-105 DCP codec in firmware (2026-11-10) status: doing
+Goal: implement the MicroPython-compatible DCP v1 encoder, strict decoder, destination matching and standard error replies.
+Done when: encode/decode/routing/error replies work; all shared valid and invalid vectors pass; RAM measurement script reports codec heap cost; exact MicroPython unix-port CI output and RAM result are recorded.
+Files: `firmware/core/dcp.py`, `firmware/tests/test_core.py`, `firmware/tests/measure_dcp_ram.py`; `TASKS.md` and `PROGRESS.md` for task status.
