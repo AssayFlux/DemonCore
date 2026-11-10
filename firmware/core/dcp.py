@@ -363,7 +363,7 @@ def route(message, node_id, groups=None, tags=None, cells=None):
     return matches_destination(message["dst"], node_id, groups, tags, cells)
 
 
-def make_error_reply(request, code, message, details=None):
+def make_error_reply(request, code, message, details=None, responder=None):
     if code not in ERROR_CODES:
         code = "E_INTERNAL"
     args = {"error": {"code": code, "message": str(message)[:160]}}
@@ -371,8 +371,11 @@ def make_error_reply(request, code, message, details=None):
         if not isinstance(details, dict):
             _fail("E_INVALID_ARG", "Error details must be an object")
         args["error"]["details"] = details
+    source = responder if responder is not None else request["dst"]
+    if not isinstance(source, str) or not source.startswith("node:"):
+        _fail("E_INVALID_ARG", "A concrete responder node address is required")
     reply = {
-        "v": VERSION, "id": request["id"], "src": request["dst"],
+        "v": VERSION, "id": request["id"], "src": source,
         "dst": request["src"], "t": "res", "op": request["op"], "args": args,
     }
     return validate(reply)

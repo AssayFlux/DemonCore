@@ -99,7 +99,7 @@ def test_dcp_shared_vectors():
 def test_dcp_strict_json_and_limits():
     base = '{"v":"1.0","id":"0000000000000001","src":"node:1","dst":"*","t":"req","op":"sys.ping","args":{}}'
     try:
-        dcp.decode(base.replace('"v":"1.0"', '"v":"1.0","v":"1.0"}').encode("utf-8"))
+        dcp.decode(b'{"v":"1.0","v":"1.0","id":"0000000000000001","src":"node:1","dst":"*","t":"req","op":"sys.ping","args":{}}')
         assert False
     except dcp.DCPError:
         pass
@@ -125,8 +125,8 @@ def test_dcp_routing_and_error_reply():
     assert dcp.route(request, 8, groups=("lab",))
     assert not dcp.route(request, 8, groups=("other",))
     assert dcp.matches_destination("*", 99)
-    reply = dcp.make_error_reply(request, "E_NOT_FOUND", "missing")
-    assert reply["src"] == "group:lab" and reply["dst"] == "node:7"
+    reply = dcp.make_error_reply(request, "E_NOT_FOUND", "missing", responder="node:8")
+    assert reply["src"] == "node:8" and reply["dst"] == "node:7"
     assert reply["id"] == request["id"] and reply["op"] == request["op"]
     assert dcp.decode(dcp.encode(reply)) == reply
 
