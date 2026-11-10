@@ -89,7 +89,7 @@ Goal: repository, protocol, pin safety, firmware core, identity, build/flash pip
 - Verify: transition/timeout tests; [HUMAN] claim real board from phone client and verify persistence over reboot.
 
 ### T-112 Provisioning tool
-- Status: todo | Size: M | Depends: T-110
+- Status: doing | Size: M | Depends: T-110
 - Touch: `tools/provision.py`, `tools/tests/`, `tools/requirements.txt`, `tools/README.md`, `.github/workflows/ci.yml`, `TASKS.md`, `PROGRESS.md`
 - Done when: CSV node IDs; device secret derived as HMAC-SHA256(domain key, node ID); NVS image built; flashed with firmware; label file (ID, QR) and registry export written; domain key read from outside repo and never printed.
 - Verify: fake-domain-key tests; [HUMAN] provision 3 boards and confirm unique claimed IDs.
