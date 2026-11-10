@@ -42,3 +42,8 @@ Baseline: repository had no test suite before T-102; no baseline tests were avai
 Verified: ran the validator logic against the committed protocol schema, operation catalogue and vectors in an isolated local mirror. Output: `PASS: 23 valid vectors accepted; 12 invalid vectors rejected; 5 operation schemas loaded.` Exit code: 0. Host test dependency `jsonschema` was present. The test caught and led to a fix rejecting unsupported major version `2.0`.
 Memory: no firmware changed; image size and heap not measured.
 Next: T-103 Board profile and pin validator is next by backlog order; T-104 Firmware core skeleton is also eligible but T-103 precedes it. T-105 depends on both T-102 and T-104.
+
+### T-103 Board profile and pin validator (2026-11-10) status: doing
+Goal: encode the ESP-WROOM-32 38-pin GPIO safety classes in a data-driven profile and provide a validator that returns allow/warn/block with a reason.
+Done when: profile represents blocked, strapping, console, input-only, ADC1, ADC2, DAC and general GPIO classes; validator covers mode/write/PWM/ADC decisions; tests cover each class; owner confirms the physical board labels against a board photo/silkscreen.
+Files: `firmware/boards/`, `tools/` only.
