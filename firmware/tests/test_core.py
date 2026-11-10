@@ -1,11 +1,13 @@
 """Self-contained tests runnable with CPython or the MicroPython unix port."""
 import os
 import json
+import gc
 
 from core.config import load_config
 from core.log import LogRing
 from core.scheduler import Scheduler, asyncio
 from core.state import load_state, mark_stable, prepare_boot
+from core import dcp
 
 class FakeWatchdog:
     def __init__(self):
@@ -76,10 +78,63 @@ def test_watchdog_feed_is_in_scheduler_loop():
     assert watchdog.feeds == 3
     assert stable == [True]
 
+def test_dcp_shared_vectors():
+    with open("protocol/vectors/valid.json", "r") as stream:
+        valid = json.load(stream)
+    with open("protocol/vectors/invalid.json", "r") as stream:
+        invalid = json.load(stream)
+    for vector in valid:
+        message = dcp.decode(json.dumps(vector["message"]).encode("utf-8"))
+        assert message == vector["message"]
+        assert dcp.decode(dcp.encode(message)) == message
+    for vector in invalid:
+        rejected = False
+        try:
+            dcp.decode(json.dumps(vector["message"]).encode("utf-8"))
+        except dcp.DCPError:
+            rejected = True
+        assert rejected, vector["name"]
+    assert len(valid) >= 20 and len(invalid) >= 10
+
+def test_dcp_strict_json_and_limits():
+    base = '{"v":"1.0","id":"0000000000000001","src":"node:1","dst":"*","t":"req","op":"sys.ping","args":{}}'
+    try:
+        dcp.decode(base.replace('"v":"1.0"', '"v":"1.0","v":"1.0"}').encode("utf-8"))
+        assert False
+    except dcp.DCPError:
+        pass
+    try:
+        dcp.decode(b'{"v":"1.0","id":"0000000000000001","src":"node:1","dst":"*","t":"req","op":"sys.ping","args":{},"x":NaN}')
+        assert False
+    except dcp.DCPError:
+        pass
+    try:
+        dcp.decode(b'\xff')
+        assert False
+    except dcp.DCPError:
+        pass
+    try:
+        dcp.decode(b' ' * (dcp.MAX_MESSAGE_BYTES + 1))
+        assert False
+    except dcp.DCPError as error:
+        assert error.code == "E_TOO_LARGE"
+
+def test_dcp_routing_and_error_reply():
+    request = {"v": "1.0", "id": "0000000000000001", "src": "node:7",
+               "dst": "group:lab", "t": "req", "op": "sys.ping", "args": {}}
+    assert dcp.route(request, 8, groups=("lab",))
+    assert not dcp.route(request, 8, groups=("other",))
+    assert dcp.matches_destination("*", 99)
+    reply = dcp.make_error_reply(request, "E_NOT_FOUND", "missing")
+    assert reply["src"] == "group:lab" and reply["dst"] == "node:7"
+    assert reply["id"] == request["id"] and reply["op"] == request["op"]
+    assert dcp.decode(dcp.encode(reply)) == reply
+
 def run():
     tests = [test_config_defaults, test_config_overrides, test_log_ring,
              test_crash_counter_and_safe_mode, test_corrupt_state_fails_safe,
-             test_watchdog_feed_is_in_scheduler_loop]
+             test_watchdog_feed_is_in_scheduler_loop, test_dcp_shared_vectors,
+             test_dcp_strict_json_and_limits, test_dcp_routing_and_error_reply]
     for test in tests:
         test()
         print("PASS", test.__name__)
