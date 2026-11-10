@@ -35,4 +35,4 @@ jobs:
           make -C "$RUNNER_TEMP/micropython/ports/unix" -j2
       - name: Run firmware core tests on MicroPython
         run: |
-          MICROPYPATH=firmware "$RUNNER_TEMP/micropython/ports/unix/build-standard/micropython" firmware/tests/test_core.py
+          MICROPYPATH=.frozen:firmware "$RUNNER_TEMP/micropython/ports/unix/build-standard/micropython" firmware/tests/test_core.py

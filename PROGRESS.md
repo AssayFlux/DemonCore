@@ -101,3 +101,12 @@ Changed: the first unix-port CI run successfully built MicroPython v1.29.0 but f
 Verified: pending rerun.
 Memory: no ESP32 image built; device heap and flash budgets remain unmeasured.
 Next: rerun T-104 CI and record the six-test result; only then select the next eligible backlog task.
+
+### T-104 Firmware core skeleton — preserve frozen modules in unix-port test path (2026-11-10) status: doing
+Goal: retain MicroPython's frozen standard-library search path while adding the repository firmware package to the unix-port test environment.
+Done when: the pinned unix port builds; all six core tests pass under MicroPython; exact output is recorded; task status is updated.
+Files: `.github/workflows/ci.yml`, `PROGRESS.md`.
+Changed: the previous run built MicroPython v1.29.0 successfully but failed importing asyncio. The CI job set `MICROPYPATH=firmware`, which replaced the unix port's frozen-module search entry. Restored the frozen search entry explicitly with `MICROPYPATH=.frozen:firmware`; no firmware logic changed.
+Verified: pending rerun.
+Memory: no ESP32 image built; device heap and flash budgets remain unmeasured.
+Next: rerun T-104 unix-port CI and record the six-test result; then select the next eligible backlog task.
