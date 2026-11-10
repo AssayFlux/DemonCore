@@ -372,3 +372,10 @@ Done when: nodes in the same cell derive the same cell key; different cells and 
 Files: `tools/provision.py`, `tools/tests/test_provision.py`, `tools/README.md`, `.github/workflows/ci.yml`, `PROGRESS.md`.
 
 Changed: corrected the cell key input from node ID to the canonical DCP cell slug. This is required for nodes in one cell to share the key used for cell communication, while domain separation keeps it distinct from per-device secrets and from other cells. Added a real ESP-IDF NVS-generator integration step to the firmware CI job using a disposable fake key and temporary output directory. The earlier host-tools CI run confirmed 18 tests after fixing the label-test import; the latest revision's complete CI is pending.
+
+### T-112 CI shell and key-scope documentation correction (2026-11-10) status: doing
+Goal: ensure the real ESP-IDF generator integration step uses valid shell escaping and document shared-cell key semantics accurately.
+Done when: CI creates a valid CSV with printf, passes valid line continuations, real generator test completes, and README describes cell-scoped rather than per-node cell keys.
+Files: `tools/README.md`, `.github/workflows/ci.yml`, `PROGRESS.md`.
+
+Changed: corrected the README derivation description and reduced over-escaped backslashes in the CI shell block. The previous CI run 42809140523 confirmed lint PASS and the host-tools suite PASS (18 tests) after the label-test import correction; its run predates this cell-scope/integration revision. The new real-generator CI run is pending.

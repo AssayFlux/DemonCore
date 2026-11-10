@@ -64,12 +64,12 @@ jobs:
           python -m pip install "qrcode>=8.2,<9"
           TMP_PROVISION="$(mktemp -d)"
           trap 'rm -rf "$TMP_PROVISION"' EXIT
-          printf 'node_id,name,cell\\n7001,CI fixture,ci-lab\\n' > "$TMP_PROVISION/nodes.csv"
+          printf 'node_id,name,cell\n7001,CI fixture,ci-lab\n' > "$TMP_PROVISION/nodes.csv"
           python -c "from pathlib import Path; Path('$TMP_PROVISION/domain.key').write_bytes(bytes(range(32)))"
-          python tools/provision.py \\
-            --nodes "$TMP_PROVISION/nodes.csv" \\
-            --domain-key-file "$TMP_PROVISION/domain.key" \\
-            --output-dir "$TMP_PROVISION/out" \\
+          python tools/provision.py \
+            --nodes "$TMP_PROVISION/nodes.csv" \
+            --domain-key-file "$TMP_PROVISION/domain.key" \
+            --output-dir "$TMP_PROVISION/out" \
             --nvs-generator "$RUNNER_TEMP/esp-idf/components/nvs_flash/nvs_partition_generator/nvs_partition_gen.py"
           test "$(stat -c %s "$TMP_PROVISION/out/node-7001.nvs.bin")" = "16384"
           test -s "$TMP_PROVISION/out/node-7001-label.svg"

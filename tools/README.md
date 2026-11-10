@@ -11,7 +11,7 @@ The WebSocket and JSON Schema packages are host tooling only; they add no ESP32 
 
 ## Manufacturing provisioning
 
-Provision one node per CSV row. The CSV must contain a unique decimal `node_id`; optional `name` and `cell` columns are metadata only. The 32-byte domain key must be supplied from a file outside this repository, either as 32 raw bytes or 64 hexadecimal characters. The tool derives the device secret as HMAC-SHA256(domain key, ASCII decimal node ID) and derives a distinct per-node cell key with the domain label `demoncore:cell:v1:`. The domain key and derived secrets are never included in labels or registry exports.
+Provision one node per CSV row. The CSV must contain a unique decimal `node_id`; optional `name` and `cell` columns are metadata only. The 32-byte domain key must be supplied from a file outside this repository, either as 32 raw bytes or 64 hexadecimal characters. The tool derives the device secret as HMAC-SHA256(domain key, ASCII decimal node ID). Nodes in the same DCP cell share a cell key derived as HMAC-SHA256(domain key, `demoncore:cell:v1:` + canonical cell slug); different cells receive different keys. The domain key and derived secrets are never included in labels or registry exports.
 
 Install host dependencies with `python -m pip install -r tools/requirements.txt`. Find the ESP-IDF NVS generator under `$IDF_PATH/components/nvs_flash/nvs_partition_generator/nvs_partition_gen.py`. Example:
 
