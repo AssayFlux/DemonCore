@@ -26,7 +26,7 @@ class DCPError(Exception):
         self.code = code
         self.message = str(message)[:160]
         self.details = details
-        Exception.__init__(self, self.message)
+        self.args = (self.message,)
 
 
 def _fail(code, message):
