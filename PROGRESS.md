@@ -110,3 +110,12 @@ Changed: the previous run built MicroPython v1.29.0 successfully but failed impo
 Verified: pending rerun.
 Memory: no ESP32 image built; device heap and flash budgets remain unmeasured.
 Next: rerun T-104 unix-port CI and record the six-test result; then select the next eligible backlog task.
+
+### T-104 Firmware core skeleton — MicroPython unix-port verification (2026-11-10) status: done
+Goal: close the MicroPython core task after the pinned v1.29.0 unix-port build and all six tests pass.
+Done when: asyncio scheduler, JSON config defaults, bounded log ring, main-loop watchdog, three-crash safe mode and unix-port compatibility are verified; exact output is recorded; backlog status is updated.
+Files: `firmware/core/`, `firmware/tests/`, `.github/workflows/ci.yml` (CI verification only); `TASKS.md` and `PROGRESS.md` for status.
+Changed: added CI that builds the official MicroPython v1.29.0 unix port and runs the core test script. The final invocation preserves frozen modules and adds the repository package path with `MICROPYPATH=.frozen:firmware`.
+Verified: GitHub Actions run 42764956525, commit `7af3475de10f039b3fe0b364424109fab79d8f22`: lint job PASS; pinned MicroPython unix build PASS; tests PASS — `PASS test_config_defaults`, `PASS test_config_overrides`, `PASS test_log_ring`, `PASS test_crash_counter_and_safe_mode`, `PASS test_corrupt_state_fails_safe`, `PASS test_watchdog_feed_is_in_scheduler_loop`, `PASS: 6 firmware core tests`. Exit code 0.
+Memory: ESP32 image size and physical-device free heap not yet measured; those are part of T-107 build report and hardware validation. Unix executable size is not an ESP32 firmware measurement.
+Next: T-105 DCP codec in firmware is now eligible (depends on T-102 and T-104). T-103 remains blocked until owner confirms physical board header labels.
