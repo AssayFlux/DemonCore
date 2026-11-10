@@ -9,7 +9,7 @@ import unittest
 
 from tools.provision import (
     REPO_ROOT, derive_credentials, load_domain_key, load_nodes,
-    nvs_csv_text, generate_nvs_image, _private_output_dir,
+    nvs_csv_text, generate_nvs_image, write_label, _private_output_dir,
 )
 
 
