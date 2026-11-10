@@ -15,7 +15,6 @@ EXPECTED = {
 }
 OPTIONAL_DISABLED = (
     "CONFIG_LOG_MAXIMUM_LEVEL_INFO",
-    "CONFIG_ETH_USE_SPI_ETHERNET",
     "CONFIG_ETH_SPI_ETHERNET_W5500",
     "CONFIG_ETH_SPI_ETHERNET_KSZ8851SNL",
     "CONFIG_ETH_SPI_ETHERNET_DM9051",
@@ -81,6 +80,9 @@ def main():
         raise SystemExit("ESP-IDF build is not using size optimization (-Os)")
     if "CONFIG_COMPILER_OPTIMIZATION_PERF=y" in sdkconfig_text:
         raise SystemExit("ESP-IDF performance optimization (-O2) is still enabled")
+    # ETH_USE_SPI_ETHERNET defaults to y in the pinned ESP-IDF Kconfig menu.
+    # It only selects the umbrella component; the three concrete PHY drivers
+    # below default to n and must remain disabled for this board profile.
     enabled_optional = [name for name in OPTIONAL_DISABLED if name + "=y" in sdkconfig_text]
     if enabled_optional:
         raise SystemExit("Optional ESP-IDF features unexpectedly enabled: " + ", ".join(enabled_optional))

@@ -12,8 +12,11 @@ features outside the current DemonCore board contract: SPI Ethernet PHY
 drivers (W5500, KSZ8851SNL and DM9051), and runtime INFO-level ESP
 logging. The ULP coprocessor remains enabled because the pinned MicroPython
 ESP32 port compiles its ULP support source unconditionally. Wi-Fi, BLE, TLS, MicroPython networking and the frozen
-DemonCore core remain enabled. The build fails closed if the pinned upstream
-configuration changes, and the report verifies the generated sdkconfig.
+DemonCore core remain enabled. The ESP-IDF `ETH_USE_SPI_ETHERNET` umbrella menu may still read enabled because
+its pinned Kconfig default is `y`; that setting alone does not enable a PHY.
+The report verifies that all three concrete PHY driver options are disabled.
+The build fails closed if the pinned upstream base configuration changes, and
+the report verifies the generated sdkconfig.
 Disabling these optional facilities means this image does not provide SPI
 Ethernet; it is not part of the current hardware plan.
 

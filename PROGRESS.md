@@ -239,3 +239,15 @@ Changed: run 42790964003 compiled the application to 1,432,432 bytes in a 1,638,
 Verified: pending rerun CI. Physical ESP32 boot, post-boot heap, GC headroom and runtime filesystem free-space remain [HUMAN]; cloud CI cannot measure these.
 
 Next: verify the corrected report in CI; then request owner to connect the ESP32 over USB/serial for T-108/T-107 hardware checks.
+
+
+### T-107 CI configuration validation correction (2026-11-10) status: doing
+Goal: make the build report validate the actual pinned ESP-IDF Kconfig semantics while preserving the 10% OTA requirement.
+Done when: the three concrete SPI Ethernet PHY drivers and runtime INFO logging are disabled; the report accepts the ESP-IDF umbrella menu's documented default; CI build/report, hashes, partition layout and OTA margin pass; physical boot/runtime checks are measured or explicitly [HUMAN]-blocked.
+Files: `firmware/build/build.sh`, `firmware/build/report.py`, `firmware/build/README.md`, `PROGRESS.md`.
+
+Changed: CI run 42792854818 compiled the app to 1,432,432 bytes in the 1,638,400-byte OTA slot (205,968 bytes / 12.57% spare), but report validation failed because it treated `CONFIG_ETH_USE_SPI_ETHERNET=y` as an enabled PHY. Inspection of the pinned ESP-IDF v5.5.2 Kconfig confirms this umbrella menu defaults to `y`; the concrete W5500, KSZ8851SNL and DM9051 driver options are separate and default off. The report now checks the concrete driver options only, and the build documentation explains the umbrella setting. No partition, Wi-Fi, BLE, TLS, ULP or firmware feature changes.
+
+Verified: pending CI rerun. Prior run 42792854818 — lint PASS; MicroPython unix-port build and all 9 tests PASS; ESP32 compile PASS; Profile A and OTA capacity check from ESP-IDF PASS (12.57% spare); report gate failed on the over-broad umbrella-option assertion. The uploaded binary from that run is not yet accepted as a release because its report/hash step did not complete. Physical ESP32 boot, free heap, GC headroom and runtime filesystem checks remain [HUMAN].
+
+Next: rerun CI; download and verify the newly accepted merged binary, report and SHA-256. Only then provide the flashable file. APK work follows after firmware delivery as requested.

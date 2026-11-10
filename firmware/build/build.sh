@@ -19,8 +19,9 @@ SDKCONFIG_BASE="$MPYTHON_DIR/ports/esp32/boards/sdkconfig.base"
 mkdir -p "$OUT_DIR"
 
 # Preserve Wi-Fi, BLE and TLS. Disable optional ESP-IDF facilities that are
-# outside the DemonCore board contract: SPI Ethernet PHYs, ULP and runtime
-# INFO-level ESP logging. Keep this deterministic against the pinned source.
+# outside the DemonCore board contract: concrete SPI Ethernet PHY drivers and
+# runtime INFO-level ESP logging. ESP-IDF defaults the SPI-Ethernet menu on,
+# but its individual PHY drivers remain disabled (and are checked in report.py).
 if [[ "$(grep -c '^CONFIG_COMPILER_OPTIMIZATION_PERF=y$' "$SDKCONFIG_BASE")" != "1" ]]; then
     echo "Expected exactly one upstream performance-optimization setting in $SDKCONFIG_BASE" >&2
     exit 2
