@@ -91,3 +91,13 @@ Changed: adding a CI job that builds the official MicroPython v1.29.0 unix port 
 Verified: pending GitHub Actions run.
 Memory: no ESP32 image built; device heap and flash budgets remain unmeasured.
 Next: inspect the unix-port CI result; fix only T-104 failures, then continue to the next eligible backlog task.
+
+
+### T-104 Firmware core skeleton — unix-port import-path correction (2026-11-10) status: doing
+Goal: correct the CI invocation so the firmware package is discoverable by the MicroPython unix runtime.
+Done when: the pinned unix port builds; all six core tests pass under MicroPython; exact output is recorded; task status is updated.
+Files: `.github/workflows/ci.yml`, `PROGRESS.md`.
+Changed: the first unix-port CI run successfully built MicroPython v1.29.0 but failed before tests because the `core` package was not on MicroPython's module search path (`ImportError: no module named 'core'`). Set `MICROPYPATH=firmware` for the test invocation; no firmware source changes.
+Verified: pending rerun.
+Memory: no ESP32 image built; device heap and flash budgets remain unmeasured.
+Next: rerun T-104 CI and record the six-test result; only then select the next eligible backlog task.
