@@ -53,3 +53,8 @@ Verified: ran `python -m unittest discover -s tools/tests -v` in an isolated loc
 Blocker: acceptance requires owner verification of the physical board's 38-pin silkscreen/header mapping. The project context contains no board photo, so physical labels are not guessed. Please provide a clear photo of both sides of the exact ESP-WROOM-32 38-pin board (or a pinout image matching its exact revision) to complete this check.
 Memory: no firmware changed; image size and heap not measured.
 Next: T-104 Firmware core skeleton is the next eligible task because it depends only on T-101. T-103 remains blocked until the owner confirms the board labels.
+
+### T-104 Firmware core skeleton (2026-11-10) status: doing
+Goal: add a MicroPython-compatible asyncio runtime skeleton with default JSON configuration, bounded log ring, main-loop-only watchdog feeding and a three-crash safe-mode threshold.
+Done when: `boot.py` and `main.py` start the scheduler; configuration defaults load safely; logs use a fixed-size ring; only the main loop feeds the watchdog; three consecutive unsuccessful boots enter safe mode; modules run on the MicroPython unix port.
+Files: `firmware/core/`, `firmware/tests/` only.
