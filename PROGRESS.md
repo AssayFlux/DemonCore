@@ -54,7 +54,13 @@ Blocker: acceptance requires owner verification of the physical board's 38-pin s
 Memory: no firmware changed; image size and heap not measured.
 Next: T-104 Firmware core skeleton is the next eligible task because it depends only on T-101. T-103 remains blocked until the owner confirms the board labels.
 
-### T-104 Firmware core skeleton (2026-11-10) status: doing
+### T-104 Firmware core skeleton (2026-11-10) status: blocked
 Goal: add a MicroPython-compatible asyncio runtime skeleton with default JSON configuration, bounded log ring, main-loop-only watchdog feeding and a three-crash safe-mode threshold.
 Done when: `boot.py` and `main.py` start the scheduler; configuration defaults load safely; logs use a fixed-size ring; only the main loop feeds the watchdog; three consecutive unsuccessful boots enter safe mode; modules run on the MicroPython unix port.
 Files: `firmware/core/`, `firmware/tests/` only.
+
+Changed: added `core/boot.py`, `main.py`, `config.py`, `state.py`, `scheduler.py`, `watchdog.py`, `log.py`; default JSON config, persistent consecutive-boot counter, three-failure safe-mode flag, 30-second stable-boot reset, fixed-capacity log ring and cooperative asyncio scheduler. Watchdog construction uses the documented ESP32 `machine.WDT(timeout=...)` API; the only `feed()` call is inside the scheduler's main loop. Tests avoid CPython-only unittest/tempfile dependencies and are written as a self-contained script.
+Verified: CPython 3.13.5 mirror run of `firmware/tests/test_core.py`: 6 tests passed (defaults, config overrides, ring wrap/bounds, 3-crash safe mode, stable reset/corrupt-state fail-safe, main-loop watchdog feed). GitHub Actions run for commit `db58e1ae93ed663b2cc86c4d97811d2646f9ebc6` passed, but the existing workflow only runs `git diff --check`.
+Blocker: no `micropython` executable (unix port) is installed in the environment, and CI does not yet run the unix-port tests. Therefore the required unix-port verification has not run. Per repo rules, this task remains blocked; no MicroPython runtime or hardware behaviour is claimed as verified. Module flash/RAM measurements also remain pending the pinned build task.
+Memory: no ESP32 firmware image built; heap/image budgets not measured.
+Next: T-109 Simulator node is the next eligible task (depends only on T-102); T-103 remains blocked pending physical board-label photo verification.
