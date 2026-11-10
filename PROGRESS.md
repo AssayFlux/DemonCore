@@ -180,3 +180,14 @@ Changed: the first run after the optimization commit passed lint and all 9 Micro
 Verified: CI run 42770564358 — lint PASS; MicroPython unix-port build and all 9 tests PASS; ESP32 build did not start (exit 126, permission denied). No new firmware artifact was produced.
 
 Next: rerun CI and inspect the actual size-optimized ESP32 build, OTA headroom, merged image and checksum. Physical hardware checks remain [HUMAN].
+
+### T-107 build script quoting correction (2026-11-10) status: doing
+Goal: restore a valid shell script and rerun the pinned ESP32 build.
+Done when: `bash -n firmware/build/build.sh` passes; the script performs the pinned size-optimized build; the report verifies at least 10% OTA headroom.
+Files: `firmware/build/build.sh`, `PROGRESS.md`.
+
+Changed: CI run 42770796267 passed lint and all 9 MicroPython unix-port tests, but the ESP32 job exited before compiling because the generated script had a malformed shell quote from the initial automated edit. Replaced the script body cleanly and checked its shell syntax locally with `bash -n` (PASS). Restored executable mode 100755.
+
+Verified: shell syntax check PASS. The previous ESP32 run produced no artifact; no OTA size result yet. Real-board boot and runtime resource checks remain [HUMAN].
+
+Next: rerun CI; inspect the ESP32 build report and merged image before distributing any firmware.
