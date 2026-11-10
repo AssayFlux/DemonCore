@@ -42,14 +42,19 @@ def load_domain_key(path):
     raise ValueError("domain key must contain 32 raw bytes or 64 hexadecimal characters")
 
 
-def derive_credentials(domain_key, node_id):
+def derive_credentials(domain_key, node_id, cell="default"):
     if not isinstance(domain_key, bytes) or len(domain_key) != DEVICE_SECRET_BYTES:
         raise ValueError("domain key must be exactly 32 bytes")
     if isinstance(node_id, bool) or not isinstance(node_id, int) or not 1 <= node_id <= MAX_NODE_ID:
         raise ValueError("node_id must be a positive uint64")
+    if not isinstance(cell, str) or not re.fullmatch(r"[a-z][a-z0-9_-]{0,31}", cell):
+        raise ValueError("cell must be a DCP slug")
     identity = str(node_id).encode("ascii")
     device_secret = hmac.new(domain_key, identity, hashlib.sha256).digest()
-    cell_key = hmac.new(domain_key, b"demoncore:cell:v1:" + identity, hashlib.sha256).digest()
+    # Nodes in the same cell intentionally share a cell key; different cells
+    # are separated by the domain label and canonical DCP cell slug.
+    cell_key = hmac.new(domain_key, b"demoncore:cell:v1:" + cell.encode("ascii"),
+                        hashlib.sha256).digest()
     return device_secret, cell_key
 
 
@@ -72,8 +77,12 @@ def load_nodes(csv_path):
             seen.add(node_id)
             name = (row.get("name") or "").strip()
             cell = (row.get("cell") or "").strip()
-            if len(name) > 64 or len(cell) > 32:
-                raise ValueError("name or cell metadata too long on CSV line %d" % line)
+            if len(name) > 64:
+                raise ValueError("name metadata too long on CSV line %d" % line)
+            if not cell:
+                cell = "default"
+            if not re.fullmatch(r"[a-z][a-z0-9_-]{0,31}", cell):
+                raise ValueError("invalid DCP cell slug on CSV line %d" % line)
             rows.append({"node_id": node_id, "name": name, "cell": cell})
     if not rows:
         raise ValueError("CSV contains no nodes")
@@ -115,7 +124,7 @@ def _private_output_dir(path):
 
 
 def generate_nvs_image(node, domain_key, generator, output_dir):
-    device_secret, cell_key = derive_credentials(domain_key, node["node_id"])
+    device_secret, cell_key = derive_credentials(domain_key, node["node_id"], node["cell"])
     fd, csv_name = tempfile.mkstemp(prefix=".demoncore-nvs-", suffix=".csv", dir=str(output_dir))
     os.chmod(csv_name, 0o600)
     image_path = output_dir / ("node-%d.nvs.bin" % node["node_id"])

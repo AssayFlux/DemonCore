@@ -365,3 +365,10 @@ Files: `tools/provision.py`, `tools/tests/test_provision.py`, `tools/README.md`,
 
 Changed: first CI run 42808915742 confirmed the host-tools job passed all 17 tests (including six provisioning tests), but lint failed because the appended README section had one whitespace-only line. Removed it. Also added the visible node ID beneath the QR graphic and a regression test. No secrets are included in the label.
 Verified: host-tools job PASS — 17 tests; lint failure isolated to trailing whitespace, correction pending rerun. ESP32 build and unix-port firmware jobs were still running at time of this entry.
+
+### T-112 cell-key scope correction and real NVS generator integration (2026-11-10) status: doing
+Goal: make cell-key derivation match fleet cell semantics and verify the generated image with the pinned ESP-IDF NVS generator rather than only a test double.
+Done when: nodes in the same cell derive the same cell key; different cells and device secrets remain separated; invalid cell slugs reject; CI exercises the real v5.5.2 NVS generator and checks the 16 KiB image plus secret-free exports.
+Files: `tools/provision.py`, `tools/tests/test_provision.py`, `tools/README.md`, `.github/workflows/ci.yml`, `PROGRESS.md`.
+
+Changed: corrected the cell key input from node ID to the canonical DCP cell slug. This is required for nodes in one cell to share the key used for cell communication, while domain separation keeps it distinct from per-device secrets and from other cells. Added a real ESP-IDF NVS-generator integration step to the firmware CI job using a disposable fake key and temporary output directory. The earlier host-tools CI run confirmed 18 tests after fixing the label-test import; the latest revision's complete CI is pending.

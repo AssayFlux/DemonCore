@@ -16,9 +16,14 @@ from tools.provision import (
 class ProvisioningTests(unittest.TestCase):
     def test_derivation_matches_hmac_and_separates_cell_key(self):
         key = bytes(range(32))
-        device, cell = derive_credentials(key, 42)
+        device, cell = derive_credentials(key, 42, "lab")
         self.assertEqual(device, hmac.new(key, b"42", hashlib.sha256).digest())
-        self.assertEqual(cell, hmac.new(key, b"demoncore:cell:v1:42", hashlib.sha256).digest())
+        self.assertEqual(cell, hmac.new(key, b"demoncore:cell:v1:lab", hashlib.sha256).digest())
+        other_node, same_cell = derive_credentials(key, 43, "lab")
+        _, other_cell = derive_credentials(key, 42, "field")
+        self.assertEqual(cell, same_cell)
+        self.assertNotEqual(device, other_node)
+        self.assertNotEqual(cell, other_cell)
         self.assertEqual(len(device), 32)
         self.assertEqual(len(cell), 32)
         self.assertNotEqual(device, cell)
@@ -43,6 +48,12 @@ class ProvisioningTests(unittest.TestCase):
             path.write_text("node_id,name,cell\n7,Desk,lab\n8,Sensor,lab\n", encoding="utf-8")
             nodes = load_nodes(path)
             self.assertEqual([x["node_id"] for x in nodes], [7, 8])
+            self.assertEqual(nodes[0]["cell"], "lab")
+            path.write_text("node_id\\n9\\n", encoding="utf-8")
+            self.assertEqual(load_nodes(path)[0]["cell"], "default")
+            path.write_text("node_id,cell\\n10,INVALID CELL\\n", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                load_nodes(path)
             path.write_text("node_id\n7\n7\n", encoding="utf-8")
             with self.assertRaises(ValueError):
                 load_nodes(path)
