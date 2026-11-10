@@ -348,3 +348,12 @@ Verified: documentation diff review; baseline evidence above from GitHub Actions
 
 Next: implement the claim state machine and BLE claim-window interface without inventing an unauthenticated release path; verify against MicroPython unix-port tests and pinned ESP32 API documentation.
 
+
+### T-112 Provisioning tool — implementation and host verification (2026-11-10) status: doing
+Goal: implement repeatable host provisioning for unique node IDs, per-node credentials, NVS images, labels and registry export.
+Done when: CSV node IDs are validated; device secret follows HMAC-SHA256(domain key, canonical decimal node ID); cell key uses a separate domain-separated HMAC; NVS images match IdentityStore's exact NVS keys and Profile A size; labels contain only node ID/QR; registry export contains no credentials; optional flashing writes split firmware/NVS at verified partition offsets; fake-key tests pass; [HUMAN] provision three physical boards and verify unique claimed identities.
+Files: `tools/provision.py`, `tools/tests/test_provision.py`, `tools/requirements.txt`, `tools/README.md`, `.github/workflows/ci.yml`, `TASKS.md`, `PROGRESS.md`.
+
+Changed: owner authorised the implementation choice. Device secret is HMAC-SHA256(domain key, ASCII decimal node ID), matching the existing task contract. Cell key is HMAC-SHA256(domain key, `demoncore:cell:v1:` + ASCII decimal node ID), cryptographically separated from the device secret. Domain key files and provisioning output are required to remain outside the repository. Generated NVS images contain plaintext credentials; tool sets restrictive file permissions and explicitly warns that NVS/flash encryption has not been enabled. Registry and QR label outputs never include secrets. Flashing uses split bootloader, partition table, NVS, PHY-init and app images; it deliberately avoids writing a potentially contiguous merged image over the NVS partition.
+
+Verified: pending CI. The tool uses Espressif's documented NVS partition generator interface and CSV namespace/data encoding; see ESP-IDF NVS generator documentation. Hardware provisioning/serial flash remains [HUMAN].
