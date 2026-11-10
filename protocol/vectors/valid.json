@@ -2,7 +2,7 @@
   {
     "name": "sys-info",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000001",
       "dst": "node:100",

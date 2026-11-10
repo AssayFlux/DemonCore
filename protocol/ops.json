@@ -1,5 +1,5 @@
 {
-  "protocol_version": 1,
+  "protocol_version": "1.0",
   "operations": {
     "sys.info": {
       "description": "Report firmware identity and capabilities.",

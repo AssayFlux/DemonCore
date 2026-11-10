@@ -25,8 +25,9 @@ def main():
     for vector in valid:
         message = vector["message"]
         errors = list(envelope.iter_errors(message))
-        if message.get("t") == "req" and message.get("op") in operations:
-            errors.extend(Draft202012Validator(operations[message["op"]]["request"]).iter_errors(message.get("args")))
+        if message.get("op") in operations and message.get("t") in ("req", "res"):
+            contract = operations[message["op"]]["request" if message["t"] == "req" else "response"]
+            errors.extend(Draft202012Validator(contract).iter_errors(message.get("args")))
         if errors:
             failures.append("valid %s rejected: %s" % (vector["name"], "; ".join(e.message for e in errors)))
 

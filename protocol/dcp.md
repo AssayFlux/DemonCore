@@ -3,7 +3,7 @@
 Status: v1.0 normative contract. Encoding is UTF-8 JSON; one complete message is one JSON object.
 
 ## Envelope
-Every message has exactly: `v` (integer major version, currently 1), `id` (16–32 lowercase hex characters), `src` (concrete `node:<positive-id>`), `dst` (address selector), `t` (`req`, `res`, `evt`), `op` (namespaced operation), and `args` (object, including when empty). Unknown envelope fields are rejected in v1.
+Every message has exactly: `v` (version string `1.0`; compatible additive extensions increment the minor component, breaking changes increment the major component), `id` (16–32 lowercase hex characters), `src` (concrete `node:<positive-id>`), `dst` (address selector), `t` (`req`, `res`, `evt`), `op` (namespaced operation), and `args` (object, including when empty). Unknown envelope fields are rejected in v1.
 
 ## Addressing
 - `node:<decimal-id>`: one node, positive decimal ID.
@@ -27,4 +27,4 @@ Maximum encoded message size is 4,096 bytes after UTF-8 JSON encoding. Args nest
 The argument and response contracts are in [ops.json](ops.json): `sys.info`, `sys.ping`, `gpio.mode`, `gpio.read`, `gpio.write`. GPIO schema-valid pins are not necessarily safe: every operation must also pass the data-driven board pin validator.
 
 ## Compatibility and security
-v1 uses `v: 1`; changes to field meaning are forbidden. New fields require a documented minor-version extension before implementation. This envelope does not authenticate traffic. Authentication/encryption belong to the security tasks; do not improvise cryptography or put domain keys in vectors. Claimed nodes must reject unauthenticated traffic once that layer is implemented.
+v1.0 uses `v: "1.0"`; compatible additive extensions increment the minor component (for example, `1.1`), while breaking changes increment the major component. Changes to field meaning are forbidden. This envelope does not authenticate traffic. Authentication/encryption belong to the security tasks; do not improvise cryptography or put domain keys in vectors. Claimed nodes must reject unauthenticated traffic once that layer is implemented.
