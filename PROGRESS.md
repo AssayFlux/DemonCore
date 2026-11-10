@@ -74,3 +74,10 @@ Changed: added `tools/sim_node.py` with WebSocket serving, schema/operation vali
 Verified: local integration run using the installed WebSocket 16.0 and JSON Schema 4.26.0 libraries: 6 tests passed. Shared valid/invalid vectors accepted/rejected; blocked and warned pins return DCP errors; GPIO mode/write/read round-trip passed; 100 simulated nodes were started behind a WebSocket server and all 100 returned distinct `sys.info` replies; wildcard routing returned all nodes. GitHub Actions run for commit `43f008c1bc0b03201b22190a48a3ea7455879abe` passed its configured `git diff --check` job.
 Memory: simulator is host-only; no firmware flash/RAM impact.
 Next: T-113 App skeleton is the next eligible task (depends on T-109 only), but the current environment has no Flutter or Dart executable; check availability before implementation and block if the required analyze/test verification cannot run.
+
+### T-113 App skeleton (2026-11-10) status: blocked
+Goal: create the Flutter fleet app shell with the NodeLink abstraction and WebSocket adapter, then connect it to the simulator.
+Done when: Flutter project builds; NodeLink and WebSocket adapter exist; fleet lists simulator nodes; node detail displays sys.info; `flutter analyze` and `flutter test` pass.
+Files: `app/` only.
+Blocker: neither `flutter` nor `dart` is installed in the execution environment. Creating a project without the actual SDK would require guessing the SDK constraints/package metadata, and the required analyze/test verification could not run. No app files were changed.
+Next: owner must provide a Flutter/Dart-capable runner or enable the SDK in the build environment. Gate 1 remains blocked.
