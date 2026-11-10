@@ -91,7 +91,7 @@ Goal: repository, protocol, pin safety, firmware core, identity, build/flash pip
 ### T-112 Provisioning tool
 - Status: doing | Size: M | Depends: T-110
 - Touch: `tools/provision.py`, `tools/tests/`, `tools/requirements.txt`, `tools/README.md`, `.github/workflows/ci.yml`, `TASKS.md`, `PROGRESS.md`
-- Done when: CSV node IDs; device secret derived as HMAC-SHA256(domain key, node ID); NVS image built; flashed with firmware; label file (ID, QR) and registry export written; domain key read from outside repo and never printed.
+- Done when: CSV node IDs are unique positive uint64 values; device secret is HMAC-SHA256(domain key, ASCII decimal node ID); cell key is HMAC-SHA256(domain key, `demoncore:cell:v1:` + canonical DCP cell slug) so members of a cell share it; exact IdentityStore NVS keys are generated into a 16 KiB image; printable label contains node ID and QR; registry export contains metadata only; domain key is read from outside repo and never printed; optional one-board flashing uses split images and Profile A offsets without overwriting NVS.
 - Verify: fake-domain-key tests; [HUMAN] provision 3 boards and confirm unique claimed IDs.
 
 ### T-113 App skeleton
