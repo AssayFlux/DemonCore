@@ -9,10 +9,11 @@ Statuses: `todo`, `doing`, `done`, `blocked`.
 Goal: repository, protocol, pin safety, firmware core, identity, build/flash pipeline, simulator and app skeleton.
 
 ### T-101 Repo skeleton and CI
-- Status: todo | Size: S | Depends: none
-- Touch: repo root, `.github/workflows/`, `docs/`
-- Done when: required folders from AGENTS.md exist with short READMEs; `.gitignore` covers build output and secrets; CI lints every push; LICENSE is a placeholder and owner is asked which licence to use; `docs/PLAN.md` contains the master plan.
-- Verify: push a branch and observe CI pass.
+- Status: blocked | Size: S | Depends: none
+- Touch: repo root, `.github/workflows/`, `docs/`, `firmware/`, `app/`, `hub/`, `protocol/`, `tools/`, `web-flasher/`
+- Done when: required folders from AGENTS.md exist with short READMEs; `.gitignore` covers build output and secrets; CI runs a lint check on every push; the existing Apache-2.0 LICENSE is preserved until the owner confirms whether it is intentional; `docs/PLAN.md` contains the master plan.
+- Verify: push directly to `main` and observe CI pass.
+- Blocker: owner confirmation of the existing repository licence is still required; do not replace the licence text without approval.
 
 ### T-102 DCP v1 specification
 - Status: todo | Size: M | Depends: T-101
