@@ -215,3 +215,15 @@ Verified: run 42771740065 — lint PASS; MicroPython unix-port build and all 9 t
 
 Memory: no physical ESP32 boot; free heap, GC headroom and runtime filesystem space remain [HUMAN].
 Next: rerun pinned CI, inspect the measured OTA report, then iterate only on source-verified optional features if the 10% threshold still fails.
+
+
+### T-107 OTA headroom — repair report and enable verified LTO (2026-11-10) status: doing
+Goal: reduce the app below 90% of its unchanged OTA slot using supported compiler/linker optimization.
+Done when: report script compiles; pinned ESP32 build confirms both LTO settings; app image is <=1,474,560 bytes; Profile A, Wi-Fi, BLE, TLS and frozen core remain enabled; unix-port tests and lint pass; report records image/source hashes.
+Files: `firmware/build/build.sh`, `firmware/build/report.py`, `firmware/build/README.md`, `PROGRESS.md`.
+
+Changed: CI run 42779305209 compiled the app at 1,497,968 bytes (8.57% spare), but report generation failed because a newline string literal was corrupted. Corrected report output writing. ESP-IDF Kconfig exposes `CONFIG_COMPILER_LTO_LINKTIME` and `CONFIG_COMPILER_LTO_COMPILETIME`; enabling both allows link-time dead-code elimination across translation units. No application features or partition geometry are removed. LTO may increase task stack use, so physical stack/heap verification remains mandatory.
+
+Verified: pending CI. Previous run 42779305209: lint PASS; MicroPython unix-port build and 9 tests PASS; ESP32 compilation PASS; report FAIL (syntax error). Provisional app size 1,497,968 bytes, OTA spare 140,432 bytes (8.57%), 23,408 bytes short of the 10% target. No accepted binary artifact from that run.
+
+Next: inspect LTO build report and actual binary; if LTO does not meet 10%, continue with source-verified optimization only. Real-board boot, stack high-water, free heap, GC headroom and filesystem free space remain [HUMAN].

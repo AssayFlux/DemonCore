@@ -25,6 +25,14 @@ if [[ "$(grep -c '^CONFIG_COMPILER_OPTIMIZATION_PERF=y$' "$SDKCONFIG_BASE")" != 
     echo "Expected exactly one upstream performance-optimization setting in $SDKCONFIG_BASE" >&2
     exit 2
 fi
+# Enable supported ESP-IDF GCC LTO for cross-translation-unit dead-code elimination.
+# Kconfig accepts these settings in the pinned ESP-IDF; report.py verifies them.
+if grep -q '^CONFIG_COMPILER_LTO_LINKTIME=' "$SDKCONFIG_BASE" || grep -q '^CONFIG_COMPILER_LTO_COMPILETIME=' "$SDKCONFIG_BASE"; then
+    echo "LTO settings unexpectedly exist in upstream sdkconfig.base; review before proceeding" >&2
+    exit 2
+fi
+printf '\n# DemonCore size optimization: link-time optimization\nCONFIG_COMPILER_LTO_LINKTIME=y\nCONFIG_COMPILER_LTO_COMPILETIME=y\n' >> "$SDKCONFIG_BASE"
+
 OPTIONAL_SETTINGS=(
     CONFIG_LOG_MAXIMUM_LEVEL_INFO
     CONFIG_ETH_USE_SPI_ETHERNET
