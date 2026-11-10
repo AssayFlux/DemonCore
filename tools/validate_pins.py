@@ -21,12 +21,14 @@ def evaluate(profile, pin, action, mode=None, confirm=False, wifi_active=False):
     def result(status, reason):
         return {"status": status, "reason": reason, "pin": pin, "action": action}
 
-    if not isinstance(pin, int) or isinstance(pin, bool) or pin not in profile["available_gpio"]:
-        return result("block", "GPIO is not available on this ESP32 profile")
     if action not in ACTIONS:
         return result("block", "unsupported pin action")
+    if not isinstance(pin, int) or isinstance(pin, bool):
+        return result("block", "GPIO identifier must be an integer")
     if "blocked" in memberships:
         return result("block", profile["rules"]["blocked"])
+    if pin not in profile["available_gpio"]:
+        return result("block", "GPIO is not available on this ESP32 profile")
     if "console" in memberships:
         return result("block", profile["rules"]["console"])
 
@@ -35,10 +37,10 @@ def evaluate(profile, pin, action, mode=None, confirm=False, wifi_active=False):
             return result("block", "unsupported digital mode")
         if "input_only" in memberships and mode != "input":
             return result("block", profile["rules"]["input_only"])
+        if not ({"general", "strapping", "input_only"} & memberships):
+            return result("block", "GPIO has no digital mode capability in this profile")
     elif action in ("write", "pwm") and "input_only" in memberships:
         return result("block", profile["rules"]["input_only"])
-    elif action in ("mode", "write", "pwm") and not ({"general", "strapping"} & memberships):
-        return result("block", "GPIO has no general digital output/input capability in this profile")
     elif action == "adc":
         if "adc1" not in memberships and "adc2" not in memberships:
             return result("block", "GPIO has no ADC capability")

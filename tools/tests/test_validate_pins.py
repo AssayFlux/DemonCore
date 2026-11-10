@@ -1,5 +1,5 @@
 import unittest
-from validate_pins import evaluate, load_profile
+from tools.validate_pins import evaluate, load_profile
 
 class PinPolicyTests(unittest.TestCase):
     @classmethod
