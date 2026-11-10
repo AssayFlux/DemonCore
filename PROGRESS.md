@@ -251,3 +251,15 @@ Changed: CI run 42792854818 compiled the app to 1,432,432 bytes in the 1,638,400
 Verified: pending CI rerun. Prior run 42792854818 — lint PASS; MicroPython unix-port build and all 9 tests PASS; ESP32 compile PASS; Profile A and OTA capacity check from ESP-IDF PASS (12.57% spare); report gate failed on the over-broad umbrella-option assertion. The uploaded binary from that run is not yet accepted as a release because its report/hash step did not complete. Physical ESP32 boot, free heap, GC headroom and runtime filesystem checks remain [HUMAN].
 
 Next: rerun CI; download and verify the newly accepted merged binary, report and SHA-256. Only then provide the flashable file. APK work follows after firmware delivery as requested.
+
+
+### T-107 build-script executable mode correction (2026-11-10) status: doing
+Goal: allow the pinned ESP32 CI job to execute the existing merged-firmware build script.
+Done when: Git records firmware/build/build.sh as executable; CI executes the script, produces the merged image/report, and validates at least 10% OTA headroom.
+Files: firmware/build/build.sh (file mode only), PROGRESS.md.
+
+Changed: inspected CI run 42795925402 (commit cedc4e8). The pinned ESP-IDF installation completed successfully, but the build step exited 126 because Git records firmware/build/build.sh as mode 100644; the script itself was not run. Changed only the Git executable bit to 100755; no script contents, firmware sources, partitions, or app files changed.
+
+Verified: pending rerun. In run 42795925402, lint PASS and all 9 MicroPython unix-port tests PASS; ESP32 build did not start due to permission denied. No artifact was produced by that run. Physical ESP32 boot, free heap, GC headroom and filesystem checks remain [HUMAN].
+
+Next: rerun CI; inspect the actual ESP32 build report, merged image, checksum and OTA headroom. Do not begin T-113 until T-107 is done or formally blocked under the repository's ordered workflow.
