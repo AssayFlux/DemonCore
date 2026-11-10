@@ -1,0 +1,334 @@
+[
+  {
+    "name": "sys-info",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000001",
+      "dst": "node:100",
+      "t": "req",
+      "op": "sys.info",
+      "args": {}
+    }
+  },
+  {
+    "name": "sys-info-res",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000002",
+      "dst": "node:100",
+      "t": "res",
+      "op": "sys.info",
+      "args": {
+        "firmware": "1.0.0",
+        "hardware": "ESP32",
+        "capabilities": [
+          "sys.info",
+          "sys.ping"
+        ]
+      }
+    }
+  },
+  {
+    "name": "ping-empty",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000003",
+      "dst": "node:100",
+      "t": "req",
+      "op": "sys.ping",
+      "args": {}
+    }
+  },
+  {
+    "name": "ping-token",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000004",
+      "dst": "node:100",
+      "t": "req",
+      "op": "sys.ping",
+      "args": {
+        "token": "probe-42"
+      }
+    }
+  },
+  {
+    "name": "ping-res",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000005",
+      "dst": "node:100",
+      "t": "res",
+      "op": "sys.ping",
+      "args": {
+        "uptime_ms": 2500,
+        "token": "probe-42"
+      }
+    }
+  },
+  {
+    "name": "mode-input",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000006",
+      "dst": "node:100",
+      "t": "req",
+      "op": "gpio.mode",
+      "args": {
+        "pin": 32,
+        "mode": "input"
+      }
+    }
+  },
+  {
+    "name": "mode-pullup",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000007",
+      "dst": "node:100",
+      "t": "req",
+      "op": "gpio.mode",
+      "args": {
+        "pin": 33,
+        "mode": "input_pullup"
+      }
+    }
+  },
+  {
+    "name": "mode-pulldown",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000008",
+      "dst": "node:100",
+      "t": "req",
+      "op": "gpio.mode",
+      "args": {
+        "pin": 34,
+        "mode": "input_pulldown"
+      }
+    }
+  },
+  {
+    "name": "mode-output",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000009",
+      "dst": "node:100",
+      "t": "req",
+      "op": "gpio.mode",
+      "args": {
+        "pin": 25,
+        "mode": "output"
+      }
+    }
+  },
+  {
+    "name": "mode-warning-confirm",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "000000000000000a",
+      "dst": "node:100",
+      "t": "req",
+      "op": "gpio.mode",
+      "args": {
+        "pin": 5,
+        "mode": "output",
+        "confirm": true
+      }
+    }
+  },
+  {
+    "name": "mode-res",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "000000000000000b",
+      "dst": "node:100",
+      "t": "res",
+      "op": "gpio.mode",
+      "args": {
+        "pin": 25,
+        "mode": "output"
+      }
+    }
+  },
+  {
+    "name": "read",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "000000000000000c",
+      "dst": "node:100",
+      "t": "req",
+      "op": "gpio.read",
+      "args": {
+        "pin": 34
+      }
+    }
+  },
+  {
+    "name": "read-low",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "000000000000000d",
+      "dst": "node:100",
+      "t": "res",
+      "op": "gpio.read",
+      "args": {
+        "pin": 34,
+        "value": 0
+      }
+    }
+  },
+  {
+    "name": "read-high",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "000000000000000e",
+      "dst": "node:100",
+      "t": "res",
+      "op": "gpio.read",
+      "args": {
+        "pin": 35,
+        "value": 1
+      }
+    }
+  },
+  {
+    "name": "write-low",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "000000000000000f",
+      "dst": "node:100",
+      "t": "req",
+      "op": "gpio.write",
+      "args": {
+        "pin": 25,
+        "value": 0
+      }
+    }
+  },
+  {
+    "name": "write-high",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000010",
+      "dst": "node:100",
+      "t": "req",
+      "op": "gpio.write",
+      "args": {
+        "pin": 26,
+        "value": 1
+      }
+    }
+  },
+  {
+    "name": "write-confirm",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000011",
+      "dst": "node:100",
+      "t": "req",
+      "op": "gpio.write",
+      "args": {
+        "pin": 12,
+        "value": 0,
+        "confirm": true
+      }
+    }
+  },
+  {
+    "name": "write-res",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000012",
+      "dst": "node:100",
+      "t": "res",
+      "op": "gpio.write",
+      "args": {
+        "pin": 25,
+        "value": 1
+      }
+    }
+  },
+  {
+    "name": "event",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000013",
+      "dst": "group:lab",
+      "t": "evt",
+      "op": "sys.ping",
+      "args": {
+        "uptime_ms": 3000
+      }
+    }
+  },
+  {
+    "name": "tag-selector",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000014",
+      "dst": "tag:production",
+      "t": "req",
+      "op": "sys.info",
+      "args": {}
+    }
+  },
+  {
+    "name": "cell-selector",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000015",
+      "dst": "cell:west-1",
+      "t": "req",
+      "op": "sys.info",
+      "args": {}
+    }
+  },
+  {
+    "name": "wildcard",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000016",
+      "dst": "*",
+      "t": "req",
+      "op": "sys.ping",
+      "args": {}
+    }
+  },
+  {
+    "name": "group-selector",
+    "message": {
+      "v": 1,
+      "src": "node:100",
+      "id": "0000000000000017",
+      "dst": "group:lab_1",
+      "t": "req",
+      "op": "gpio.read",
+      "args": {
+        "pin": 32
+      }
+    }
+  }
+]

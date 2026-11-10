@@ -1,0 +1,257 @@
+{
+  "protocol_version": 1,
+  "operations": {
+    "sys.info": {
+      "description": "Report firmware identity and capabilities.",
+      "request": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "response": {
+        "type": "object",
+        "required": [
+          "firmware",
+          "hardware",
+          "capabilities"
+        ],
+        "properties": {
+          "firmware": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "hardware": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "maxItems": 64
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sys.ping": {
+      "description": "Liveness probe with optional echo token.",
+      "request": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "maxLength": 64
+          }
+        },
+        "additionalProperties": false
+      },
+      "response": {
+        "type": "object",
+        "required": [
+          "uptime_ms"
+        ],
+        "properties": {
+          "uptime_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "unit": "ms"
+          },
+          "token": {
+            "type": "string",
+            "maxLength": 64
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "gpio.mode": {
+      "description": "Set digital pin mode; board profile enforcement is mandatory.",
+      "request": {
+        "type": "object",
+        "required": [
+          "pin",
+          "mode"
+        ],
+        "properties": {
+          "pin": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 39,
+            "unit": "GPIO number"
+          },
+          "mode": {
+            "enum": [
+              "input",
+              "input_pullup",
+              "input_pulldown",
+              "output"
+            ]
+          },
+          "confirm": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "response": {
+        "type": "object",
+        "required": [
+          "pin",
+          "mode"
+        ],
+        "properties": {
+          "pin": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 39
+          },
+          "mode": {
+            "enum": [
+              "input",
+              "input_pullup",
+              "input_pulldown",
+              "output"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "gpio.read": {
+      "description": "Read a digital input level; board profile enforcement is mandatory.",
+      "request": {
+        "type": "object",
+        "required": [
+          "pin"
+        ],
+        "properties": {
+          "pin": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 39,
+            "unit": "GPIO number"
+          }
+        },
+        "additionalProperties": false
+      },
+      "response": {
+        "type": "object",
+        "required": [
+          "pin",
+          "value"
+        ],
+        "properties": {
+          "pin": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 39
+          },
+          "value": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "gpio.write": {
+      "description": "Write a digital output level; board profile enforcement is mandatory.",
+      "request": {
+        "type": "object",
+        "required": [
+          "pin",
+          "value"
+        ],
+        "properties": {
+          "pin": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 39,
+            "unit": "GPIO number"
+          },
+          "value": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "confirm": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "response": {
+        "type": "object",
+        "required": [
+          "pin",
+          "value"
+        ],
+        "properties": {
+          "pin": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 39
+          },
+          "value": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "error_response": {
+    "type": "object",
+    "required": [
+      "error"
+    ],
+    "properties": {
+      "error": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "enum": [
+              "E_BAD_MESSAGE",
+              "E_VERSION",
+              "E_NOT_FOUND",
+              "E_UNSUPPORTED",
+              "E_INVALID_ARG",
+              "E_DENIED",
+              "E_PIN_BLOCKED",
+              "E_CONFIRM_REQUIRED",
+              "E_BUSY",
+              "E_TIMEOUT",
+              "E_TOO_LARGE",
+              "E_INTERNAL"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "details": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "additionalProperties": false
+  }
+}
