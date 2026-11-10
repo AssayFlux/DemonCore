@@ -7,7 +7,6 @@ from core.config import load_config
 from core.log import LogRing
 from core.scheduler import Scheduler, asyncio
 from core.state import load_state, mark_stable, prepare_boot
-from core import dcp
 
 class FakeWatchdog:
     def __init__(self):
@@ -79,6 +78,14 @@ def test_watchdog_feed_is_in_scheduler_loop():
     assert stable == [True]
 
 def test_dcp_shared_vectors():
+    global dcp
+    gc.collect()
+    heap_before = gc.mem_free() if hasattr(gc, "mem_free") else None
+    from core import dcp
+    gc.collect()
+    heap_after = gc.mem_free() if hasattr(gc, "mem_free") else None
+    if heap_before is not None and heap_after is not None:
+        print("DCP_MODULE_HEAP_BYTES", heap_before - heap_after)
     with open("protocol/vectors/valid.json", "r") as stream:
         valid = json.load(stream)
     with open("protocol/vectors/invalid.json", "r") as stream:
@@ -87,6 +94,15 @@ def test_dcp_shared_vectors():
         message = dcp.decode(json.dumps(vector["message"]).encode("utf-8"))
         assert message == vector["message"]
         assert dcp.decode(dcp.encode(message)) == message
+    gc.collect()
+    heap_before_roundtrip = gc.mem_free() if hasattr(gc, "mem_free") else None
+    probe = {"v": "1.0", "id": "0000000000000001", "src": "node:1",
+             "dst": "node:2", "t": "req", "op": "sys.ping", "args": {}}
+    dcp.decode(dcp.encode(probe))
+    gc.collect()
+    heap_after_roundtrip = gc.mem_free() if hasattr(gc, "mem_free") else None
+    if heap_before_roundtrip is not None and heap_after_roundtrip is not None:
+        print("DCP_ROUNDTRIP_RETAINED_BYTES", heap_before_roundtrip - heap_after_roundtrip)
     for vector in invalid:
         rejected = False
         try:
