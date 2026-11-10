@@ -263,3 +263,19 @@ Changed: inspected CI run 42795925402 (commit cedc4e8). The pinned ESP-IDF insta
 Verified: pending rerun. In run 42795925402, lint PASS and all 9 MicroPython unix-port tests PASS; ESP32 build did not start due to permission denied. No artifact was produced by that run. Physical ESP32 boot, free heap, GC headroom and filesystem checks remain [HUMAN].
 
 Next: rerun CI; inspect the actual ESP32 build report, merged image, checksum and OTA headroom. Do not begin T-113 until T-107 is done or formally blocked under the repository's ordered workflow.
+
+
+### T-107 ESP32 merged build — CI artifact verified; hardware acceptance pending (2026-11-10) status: blocked
+Goal: finish the reproducible ESP32_GENERIC build and publish a verified merged image while retaining the repository's hardware resource gates.
+Done when: pinned ESP32 build and report pass; image/source hashes and Profile A are recorded; at least 10% OTA-slot headroom; physical boot, post-boot heap, GC headroom and filesystem free space are measured.
+Files: `firmware/vendor/`, `firmware/manifest.py`, `firmware/partitions.csv`, `firmware/build/`, CI; `TASKS.md` and `PROGRESS.md` for status.
+
+Changed: no firmware logic or transport flags were changed. Added a build/status README explaining the verified build, the distinction between compiled Wi-Fi/BLE platform support and not-yet-implemented DemonCore transport adapters, and outstanding hardware acceptance checks.
+
+Verified: GitHub Actions run 42797507810 on main commit `631566cfd603b0157a3669bf40e92faefb37ef4f`: lint PASS; pinned MicroPython unix-port build PASS; all 9 firmware core tests PASS; ESP32 merged build PASS; Profile A PASS; size optimization PASS; concrete optional-feature exclusions PASS; OTA spare PASS at 205,968 bytes / 12.57%. Application image 1,432,432 bytes; merged image 1,493,872 bytes; merged image SHA-256 `42e42960c3f87090138a1db491cd9bb64c252468386c09711995ed62dca45ce8`. Artifact ID 13754202320 was downloaded and inspected; archive contains the merged image, report, partition CSV and checksum file.
+
+Blocker: physical ESP32 boot, post-boot free heap (>60 KiB target), GC headroom (>=20 KiB target), filesystem free space (>=25% target), and runtime/performance remain unmeasured because no physical board session has been performed. Per AGENTS.md, this task remains blocked until the human hardware verification is recorded.
+
+Transport status: underlying MicroPython/ESP-IDF Wi-Fi and BLE support is retained in the compiled platform, but DemonCore BLE and Wi-Fi DCP adapters, pairing/claim and network endpoints are not implemented. Config defaults remain BLE=false and Wi-Fi=false. Follow T-111/T-201/T-202 in backlog order; do not flip flags as a substitute for implementation.
+
+Next: owner flashes the CI-verified image and returns boot log plus REPL memory/filesystem diagnostics. Then continue the ordered transport implementation tasks when their dependencies/gates are satisfied.

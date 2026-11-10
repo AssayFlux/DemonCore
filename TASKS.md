@@ -45,7 +45,7 @@ Goal: repository, protocol, pin safety, firmware core, identity, build/flash pip
 - Verify: fake-machine unit tests; [HUMAN] toggle LED pin on real board over USB serial.
 
 ### T-107 Build pipeline and memory report
-- Status: doing | Size: L | Depends: T-104
+- Status: blocked | Size: L | Depends: T-104
 - Touch: `firmware/vendor/`, `firmware/manifest.py`, `firmware/partitions.csv`, `firmware/build/`, CI
 - Done when: pinned MicroPython ESP32_GENERIC source/binary, version and SHA256 recorded; manifest freezes core; partitions implement Profile A (two 1,600 KB slots, 16 KB NVS, 832 KB filesystem); reproducible size optimization and only explicitly unused optional ESP-IDF feature exclusions are applied without changing Profile A or disabling Wi-Fi/BLE/TLS; build emits the merged master firmware and `build/report.md` with image size and at least 10% OTA-slot headroom; post-boot free heap is measured on hardware. A build below 10% fails acceptance.
 - Verify: CI/documented-container build and report; [HUMAN] boot real board (see T-108).
