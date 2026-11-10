@@ -49,9 +49,9 @@ class ProvisioningTests(unittest.TestCase):
             nodes = load_nodes(path)
             self.assertEqual([x["node_id"] for x in nodes], [7, 8])
             self.assertEqual(nodes[0]["cell"], "lab")
-            path.write_text("node_id\\n9\\n", encoding="utf-8")
+            path.write_text("node_id\n9\n", encoding="utf-8")
             self.assertEqual(load_nodes(path)[0]["cell"], "default")
-            path.write_text("node_id,cell\\n10,INVALID CELL\\n", encoding="utf-8")
+            path.write_text("node_id,cell\n10,INVALID CELL\n", encoding="utf-8")
             with self.assertRaises(ValueError):
                 load_nodes(path)
             path.write_text("node_id\n7\n7\n", encoding="utf-8")

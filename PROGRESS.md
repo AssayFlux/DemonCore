@@ -386,3 +386,10 @@ Done when: CSV test fixtures contain real newlines; NVS image fixture includes a
 Files: `tools/provision.py`, `tools/tests/test_provision.py`, `tools/README.md`, `PROGRESS.md`.
 
 Changed: corrected escaped newline literals in two CSV test fixtures and supplied the required cell metadata to the NVS-image test. The flash option now refuses multi-row input so a single connected board cannot be silently re-flashed for every CSV row. README now documents that cell keys are shared by nodes in the same cell. Prior run 42809276400 caught these two fixture issues; lint passed.
+
+### T-112 test fixture newline correction (2026-11-10) status: doing
+Goal: ensure default-cell and invalid-cell CSV tests exercise actual multi-line CSV data rather than literal backslash characters.
+Done when: both fixture strings contain Python newline escapes that parse as separate CSV records and the host test suite passes.
+Files: `tools/tests/test_provision.py`, `PROGRESS.md`.
+
+Changed: the previous CI run exposed that two test fixture literals still contained doubled backslashes and therefore were parsed as a single header line. Replaced them with normal Python newline escapes. The NVS-image fixture now includes an explicit cell. No production behavior changed.
