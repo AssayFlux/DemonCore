@@ -65,7 +65,12 @@ Blocker: no `micropython` executable (unix port) is installed in the environment
 Memory: no ESP32 firmware image built; heap/image budgets not measured.
 Next: T-109 Simulator node is the next eligible task (depends only on T-102); T-103 remains blocked pending physical board-label photo verification.
 
-### T-109 Simulator node (2026-11-10) status: doing
+### T-109 Simulator node (2026-11-10) status: done
 Goal: implement a host-side WebSocket simulator that runs multiple distinct DCP nodes and enforces the shared protocol and board pin policy.
 Done when: simulator supports `sys.info`, `sys.ping`, `gpio.mode`, `gpio.read`, `gpio.write`; `--count N` creates N distinct node IDs; shared vectors validate; integration test starts 100 nodes and queries each.
 Files: `tools/sim_node.py`, `tools/requirements.txt`, `tests/` only.
+
+Changed: added `tools/sim_node.py` with WebSocket serving, schema/operation validation, 1..N distinct node IDs, node/group/tag/cell/wildcard routing, `sys.info`, `sys.ping`, GPIO mode/read/write and board-profile enforcement. Added host-only dependencies (`websockets>=13.0`, `jsonschema>=4.0`) and documented setup/run/test commands in `tools/README.md`. These dependencies do not enter firmware.
+Verified: local integration run using the installed WebSocket 16.0 and JSON Schema 4.26.0 libraries: 6 tests passed. Shared valid/invalid vectors accepted/rejected; blocked and warned pins return DCP errors; GPIO mode/write/read round-trip passed; 100 simulated nodes were started behind a WebSocket server and all 100 returned distinct `sys.info` replies; wildcard routing returned all nodes. GitHub Actions run for commit `43f008c1bc0b03201b22190a48a3ea7455879abe` passed its configured `git diff --check` job.
+Memory: simulator is host-only; no firmware flash/RAM impact.
+Next: T-113 App skeleton is the next eligible task (depends on T-109 only), but the current environment has no Flutter or Dart executable; check availability before implementation and block if the required analyze/test verification cannot run.
