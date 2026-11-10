@@ -230,7 +230,10 @@ def test_identity_store_wipe_and_no_secret_logging():
     assert len(secret) == 32
     store.store(9, secret, b"c" * 32, claimed=True)
     ring = LogRing(8)
-    assert all(secret.hex() not in str(item) for item in ring.snapshot())
+    ring.add("INFO", "identity persisted")
+    log_text = repr(ring.snapshot())
+    assert secret.hex() not in log_text
+    assert str(secret) not in log_text
     store.wipe()
     assert store.load() is None
     assert nvs.commits == 2

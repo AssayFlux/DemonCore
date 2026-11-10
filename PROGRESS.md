@@ -320,7 +320,7 @@ Verified: fetched the current main tree and confirmed all current source paths r
 Next: begin the staged migration as a separate task, starting with host tools. Preserve import/CLI compatibility and update CI/docs references before declaring that stage complete.
 
 
-### T-110 Identity storage (2026-11-10) status: doing
+### T-110 Identity storage (2026-11-10) status: done
 Goal: implement persistent ESP32 NVS storage for the numeric node ID, 32-byte device secret, 32-byte cell key, transmit/receive counters and claimed state.
 Done when: values use the pinned MicroPython ESP32 NVS API; secrets are never logged/printed; claimed state round-trips; malformed/partial values fail closed; fake-NVS tests cover read/write/tamper/wipe.
 Files: `firmware/core/identity.py`, `firmware/tests/test_core.py`, `TASKS.md`, `PROGRESS.md`.
@@ -329,6 +329,6 @@ Baseline: latest main CI run 42802413021 has lint PASS and all 9 existing firmwa
 
 Changed: implementation and fake-NVS tests are being added. The implementation follows the exact MicroPython v1.29.0 `esp32.NVS` API (`set_blob`, `get_blob`, `set_i32`, `get_i32`, `erase_key`, `commit`) verified against the pinned upstream source and its ESP32 NVS test. Secret values are held as fixed-size blobs; 64-bit counters are encoded as fixed-width big-endian blobs. No encryption/eFuse/flash-encryption setting is changed.
 
-Verified: pending MicroPython unix-port CI after commit. The NVS hardware driver itself cannot be exercised on the unix port; only its API contract is matched to the pinned upstream ESP32 implementation and its upstream test. Physical NVS persistence across power loss remains a hardware check.
+Verified: GitHub Actions run 42802888878, commit `e8d422d05cd0e9601148c28b65d95dbd515965af`: lint PASS; pinned MicroPython v1.29.0 unix-port build PASS; all 12 firmware core tests PASS, including identity round-trip/claim-state, malformed/tampered field rejection, input validation, wipe and no-secret-in-log-buffer checks. Exact test output: `PASS test_identity_store_roundtrip_and_claim_state`, `PASS test_identity_store_tamper_and_validation`, `PASS test_identity_store_wipe_and_no_secret_logging`, `PASS: 12 firmware core tests`. NVS hardware driver is not available on unix; its API contract matches the pinned upstream ESP32 source/test. Physical NVS persistence across power loss remains untested.
 
-Next: run the new identity tests on the pinned MicroPython unix port, inspect the ESP32 build and size report, then close T-110 only if the tests pass.
+Next: T-107 remains blocked: the most recent completed ESP32 build (run 42802413021) produced 1,390,368-byte app in a 1,638,400-byte slot, leaving 248,032 bytes / 15.14%, below the 17% floor. Continue with an evidence-based OTA size reduction; preserve Wi-Fi, BLE, standard TLS, ULP and Profile A. Physical boot/resource measurements remain [HUMAN].
