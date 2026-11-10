@@ -306,3 +306,15 @@ Verified: shell/Python syntax and CI firmware build are pending this commit. No 
 Hardware blocker: physical ESP32 boot, post-boot heap (>60 KiB), GC headroom (>=20 KiB), filesystem free space (>=25%) and runtime/performance remain [HUMAN]. OTA slot spare is a build-time flash metric, not a substitute for these hardware checks.
 
 Next: inspect the new CI run's generated sdkconfig/report, verify the actual image/hash and confirm the OTA margin before distributing a new BIN.
+
+
+### T-001 Modular monorepo architecture and migration map (2026-11-10) status: done
+Goal: define a one-repository modular monorepo with independent firmware, app, hub and tools workspaces.
+Done when: current-to-target path map, shared-root boundaries, migration order, compatibility gates and non-goals are documented without moving code in this planning task.
+Files: `docs/REPO_ARCHITECTURE.md`, `TASKS.md`, `PROGRESS.md`, `README.md`.
+
+Changed: added the modular monorepo architecture and exact current-to-target mapping. Kept DCP, shared docs, Assets, governance, licence and repository CI at root. Defined staged tools, firmware, app/hub and CI migration gates; prohibited blind moves, nested repositories, duplicate protocol contracts and fabricated app/hub projects. Added a root README pointer and a completed planning task T-001. No source files, assets, imports or build scripts were moved in this planning task.
+
+Verified: fetched the current main tree and confirmed all current source paths referenced by the mapping exist (firmware/core, boards, build, tests, vendor; tools simulator/validator/tests/dependencies; root simulator integration test; web-flasher; protocol; app and hub roots). Confirmed the four renamed Assets remain tracked under their agreed names and the LICENSE remains at root. Documentation/path-map review only; no code tests were run because no code moved. The subsequent migration task must run baseline and post-move tests.
+
+Next: begin the staged migration as a separate task, starting with host tools. Preserve import/CLI compatibility and update CI/docs references before declaring that stage complete.

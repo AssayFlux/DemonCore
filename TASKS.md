@@ -12,6 +12,12 @@ Statuses: `todo`, `doing`, `done`, `blocked`.
 - Done when: one North Star defines the three product components and non-negotiable constraints; root README has clear app/firmware entry points, action cards and five-step pathway; architecture and working rules agree; audit records safe removals/retentions and asset limitations; progress records evidence and blockers.
 - Verify: compare all links against the tracked repository tree; confirm all five phase counts against this backlog; confirm no licence or binary asset was altered without inspection.
 
+### T-001 Modular monorepo architecture and migration map
+- Status: done | Size: S | Depends: T-000
+- Touch: `docs/REPO_ARCHITECTURE.md`, `TASKS.md`, `PROGRESS.md`, `README.md`
+- Done when: define independent firmware/app/hub/tools workspaces in one repository; map current paths to target paths; identify shared root contracts/governance; specify migration order, import/build/CI compatibility gates and explicit non-goals; do not move code during this planning task.
+- Verify: compare each mapped current path against the tracked tree; confirm shared protocol and root governance remain outside product workspaces; confirm plan preserves firmware build, app/hub independence, asset blobs and Apache-2.0 licence.
+
 ## Phase 1 — Foundation
 
 Goal: repository, protocol, pin safety, firmware core, identity, build/flash pipeline, simulator and app skeleton.

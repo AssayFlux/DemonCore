@@ -64,3 +64,7 @@ See [firmware build status](firmware/build/README.md) before flashing. A CI-buil
 ## Licence
 
 Apache-2.0. Preserve the existing [LICENSE](LICENSE). Do not add third-party models, libraries or assets without recording their licences.
+
+## Modular workspace architecture
+
+DemonCore is being organised as a **modular monorepo**: firmware, app, hub and host tools are separate workspaces in this repository, while `protocol/` remains the shared DCP contract and root docs/licence/CI remain repository-wide. The approved path map and staged migration gates are in [docs/REPO_ARCHITECTURE.md](docs/REPO_ARCHITECTURE.md). Existing source paths will move only through verified migration tasks; the architecture document does not claim the workspaces are already independently buildable.
