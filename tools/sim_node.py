@@ -156,6 +156,9 @@ class Simulator:
     def handle_message(self, message):
         valid, code, reason = self.validate(message)
         if not valid:
+            if code in ("E_UNSUPPORTED", "E_INVALID_ARG"):
+                router = next(iter(self.nodes.values()))
+                return [router.error(message, code, reason)]
             return []
         targets = self.resolve(message["dst"])
         if not targets:
@@ -176,9 +179,8 @@ class Simulator:
             except (UnicodeError, ValueError, TypeError):
                 await websocket.close(code=1003, reason="invalid DCP JSON")
                 return
-            valid, code, reason = self.validate(message) if isinstance(message, dict) else (False, "E_BAD_MESSAGE", "message must be an object")
-            if not valid:
-                await websocket.close(code=1008, reason=reason[:120])
+            if not isinstance(message, dict) or list(self.envelope_validator.iter_errors(message)) or message.get("t") != "req":
+                await websocket.close(code=1008, reason="invalid DCP request envelope")
                 return
             for response in self.handle_message(message):
                 await websocket.send(json.dumps(response, separators=(",", ":")))

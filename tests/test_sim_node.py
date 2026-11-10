@@ -51,6 +51,23 @@ class SimulatorTests(unittest.TestCase):
                     self.assertEqual(len(seen), 100)
         asyncio.run(exercise())
 
+
+    def test_gpio_write_and_read_round_trip(self):
+        sim = Simulator(1)
+        request = {"v":"1.0","id":"0000000000000010","src":"node:1","dst":"node:1","t":"req","op":"gpio.mode","args":{"pin":25,"mode":"output"}}
+        self.assertEqual(sim.handle_message(request)[0]["args"]["mode"], "output")
+        request.update({"id":"0000000000000011","op":"gpio.write","args":{"pin":25,"value":1}})
+        self.assertEqual(sim.handle_message(request)[0]["args"]["value"], 1)
+        request.update({"id":"0000000000000012","op":"gpio.read","args":{"pin":25}})
+        self.assertEqual(sim.handle_message(request)[0]["args"]["value"], 1)
+
+    def test_invalid_operation_args_return_dcp_error(self):
+        sim = Simulator(1)
+        request = {"v":"1.0","id":"0000000000000020","src":"node:1","dst":"node:1","t":"req","op":"gpio.write","args":{"pin":25,"value":3}}
+        self.assertEqual(sim.handle_message(request)[0]["args"]["error"]["code"], "E_INVALID_ARG")
+        request.update({"id":"0000000000000021","op":"sys.nope","args":{}})
+        self.assertEqual(sim.handle_message(request)[0]["args"]["error"]["code"], "E_UNSUPPORTED")
+
     def test_wildcard_resolves_all_nodes(self):
         sim = Simulator(5)
         request = {"v":"1.0","id":"0000000000000001","src":"node:1","dst":"*","t":"req","op":"sys.ping","args":{}}
