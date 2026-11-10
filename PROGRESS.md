@@ -16,9 +16,9 @@ Next: T-101 Repo skeleton and CI (first backlog task; dependencies clear). Befor
 Goal: create the required DemonCore repository skeleton and a push-triggered CI lint check.
 Done when: required folders have short READMEs; `.gitignore` covers build output and secrets; CI lints every push; licence disposition is confirmed without changing legal text without approval; `docs/PLAN.md` remains the master plan.
 Files: repository root, `.github/workflows/`, `docs/`, `firmware/`, `app/`, `hub/`, `protocol/`, `tools/`, `web-flasher/`.
-Changed: added purpose READMEs for all required project folders and firmware subfolders; added `.github/workflows/ci.yml` using `git diff --check HEAD^ HEAD`; tightened `.gitignore` for generated firmware artifacts and local secrets; clarified this task's scope and main-only verification in `TASKS.md`.
+Changed: added purpose READMEs for all required project folders and firmware subfolders; added `.github/workflows/ci.yml` using `git diff --check HEAD^ HEAD`; extended the original `.gitignore` without removing its existing rules, covering generated firmware artifacts and local secrets; clarified this task's scope and main-only verification in `TASKS.md`.
 Baseline: no pre-existing test suite or CI workflow was present, so there were no baseline tests to run.
-Verified: pending push-triggered GitHub Actions result.
+Verified: both pushes to `main` triggered CI. Run #1 for `0d84a4d93e081783064595bc49217471e3c57238` passed; run #2 for `81be1c4fab074d00026ed5cdb6c06c4e0bc86337` passed. The `Lint changed files` job completed successfully, including `git diff --check HEAD^ HEAD`. Repository tree confirms all requested skeleton READMEs and `.github/workflows/ci.yml` are present.
 Blocker: repository already contains a full Apache-2.0 LICENSE, not a placeholder. Preserved it. Owner must confirm whether Apache-2.0 is intentional or specify the desired licence before T-101 can be marked done.
 Memory: no firmware code or binaries changed; image size and heap not measured.
-Next: check the CI run on `main`; ask owner to confirm the licence; only then close T-101 and proceed to T-102.
+Next: ask owner to confirm the licence; once confirmed, close T-101 and proceed to T-102.
