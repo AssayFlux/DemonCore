@@ -57,7 +57,7 @@ Goal: repository, protocol, pin safety, firmware core, identity, build/flash pip
 - Verify: [HUMAN] flash real ESP-WROOM-32 by both paths, open serial console, confirm boot log and `sys.info` reply.
 
 ### T-109 Simulator node
-- Status: todo | Size: M | Depends: T-102
+- Status: doing | Size: M | Depends: T-102
 - Touch: `tools/sim_node.py`, `tests/`
 - Done when: simulator speaks DCP over WebSocket and implements sys.info, sys.ping, gpio.* with same pin rules; `--count N` starts distinct-ID nodes.
 - Verify: vectors pass against simulator; start 100 nodes and query all.
