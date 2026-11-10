@@ -6,7 +6,6 @@ try:
     import ujson as json
 except ImportError:
     import json
-import re
 
 VERSION = "1.0"
 MAX_MESSAGE_BYTES = 4096
@@ -72,6 +71,40 @@ def _scan_string(source, index):
     _fail("E_BAD_MESSAGE", "Unterminated JSON string")
 
 
+def _valid_number(token):
+    if not token:
+        return False
+    index = 1 if token[0] == "-" else 0
+    if index >= len(token):
+        return False
+    if token[index] == "0":
+        index += 1
+        if index < len(token) and token[index].isdigit():
+            return False
+    elif "1" <= token[index] <= "9":
+        while index < len(token) and token[index].isdigit():
+            index += 1
+    else:
+        return False
+    if index < len(token) and token[index] == ".":
+        index += 1
+        start = index
+        while index < len(token) and token[index].isdigit():
+            index += 1
+        if index == start:
+            return False
+    if index < len(token) and token[index] in "eE":
+        index += 1
+        if index < len(token) and token[index] in "+-":
+            index += 1
+        start = index
+        while index < len(token) and token[index].isdigit():
+            index += 1
+        if index == start:
+            return False
+    return index == len(token)
+
+
 def _scan_value(source, index, depth):
     index = _skip_ws(source, index)
     if index >= len(source):
@@ -132,7 +165,7 @@ def _scan_value(source, index, depth):
     token = source[index:end]
     if token in ("true", "false", "null"):
         return end
-    if not re.match(r"^-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?$", token):
+    if not _valid_number(token):
         _fail("E_BAD_MESSAGE", "Invalid JSON value")
     return end
 
@@ -171,7 +204,12 @@ def _address(value, source=False):
         return not source
     if value.startswith("node:"):
         number = value[5:]
-        return bool(re.match(r"^[1-9][0-9]{0,19}$", number))
+        if not number or len(number) > 20 or number[0] < "1" or number[0] > "9":
+            return False
+        for digit in number[1:]:
+            if digit < "0" or digit > "9":
+                return False
+        return True
     for prefix in ("group:", "tag:", "cell:"):
         if value.startswith(prefix):
             return (not source) and _slug(value[len(prefix):])
@@ -284,8 +322,11 @@ def validate(message):
     if message["v"] != VERSION:
         _fail("E_VERSION", "Unsupported DCP version")
     identifier = message["id"]
-    if not isinstance(identifier, str) or not re.match(r"^[0-9a-f]{16,32}$", identifier):
+    if not isinstance(identifier, str) or len(identifier) < 16 or len(identifier) > 32:
         _fail("E_BAD_MESSAGE", "Invalid message identifier")
+    for digit in identifier:
+        if not (("0" <= digit <= "9") or ("a" <= digit <= "f")):
+            _fail("E_BAD_MESSAGE", "Invalid message identifier")
     if not _address(message["src"], True) or not message["src"].startswith("node:"):
         _fail("E_BAD_MESSAGE", "Invalid source address")
     if not _address(message["dst"]):
@@ -293,8 +334,17 @@ def validate(message):
     if message["t"] not in ("req", "res", "evt"):
         _fail("E_BAD_MESSAGE", "Invalid message type")
     op = message["op"]
-    if not isinstance(op, str) or len(op) > 64 or not re.match(r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$", op):
+    if not isinstance(op, str) or len(op) > 64:
         _fail("E_BAD_MESSAGE", "Invalid operation name")
+    parts = op.split(".")
+    if len(parts) < 2:
+        _fail("E_BAD_MESSAGE", "Invalid operation name")
+    for part in parts:
+        if not part or part[0] < "a" or part[0] > "z":
+            _fail("E_BAD_MESSAGE", "Invalid operation name")
+        for char in part[1:]:
+            if not (("a" <= char <= "z") or ("0" <= char <= "9") or char == "_"):
+                _fail("E_BAD_MESSAGE", "Invalid operation name")
     if not isinstance(message["args"], dict):
         _fail("E_BAD_MESSAGE", "DCP args must be an object")
     _check_tree(message["args"])
