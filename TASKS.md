@@ -27,7 +27,7 @@ Goal: repository, protocol, pin safety, firmware core, identity, build/flash pip
 - Verify: unit tests; [HUMAN] owner checks pin labels against real board photo/silkscreen and records differences.
 
 ### T-104 Firmware core skeleton
-- Status: todo | Size: M | Depends: T-101
+- Status: doing | Size: M | Depends: T-101
 - Touch: `firmware/core/`, `firmware/tests/`
 - Done when: `boot.py` and `main.py` start an asyncio scheduler; JSON config defaults; log ring buffer; main-loop-only watchdog; crash counter enters safe mode after 3 consecutive crashes; unix-port compatible.
 - Verify: unix-port unit tests in CI.
