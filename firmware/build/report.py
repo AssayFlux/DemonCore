@@ -18,6 +18,10 @@ OPTIONAL_DISABLED = (
     "CONFIG_ETH_SPI_ETHERNET_W5500",
     "CONFIG_ETH_SPI_ETHERNET_KSZ8851SNL",
     "CONFIG_ETH_SPI_ETHERNET_DM9051",
+    "CONFIG_LWIP_PPP_SUPPORT",
+    "CONFIG_LWIP_PPP_PAP_SUPPORT",
+    "CONFIG_LWIP_PPP_CHAP_SUPPORT",
+    "CONFIG_MBEDTLS_SSL_PROTO_DTLS",
 )
 
 
@@ -69,7 +73,10 @@ def main():
     app_size = app.stat().st_size
     headroom = slot_size - app_size
     headroom_percent = 100.0 * headroom / slot_size
-    passes = headroom >= slot_size * 0.10
+    # Owner target: 20% spare with a +/-3 percentage-point tolerance.
+    # Fail closed below 17%; >20% is the preferred result.
+    passes = headroom >= slot_size * 0.17
+    target_pass = headroom >= slot_size * 0.20
     fs_size = actual["vfs"][1]
     merged_size = merged.stat().st_size
     sdkconfig = build_dir / "sdkconfig"
@@ -94,7 +101,9 @@ def main():
         "- MicroPython source archive SHA-256: `" + args.source_sha256 + "`",
         "- ESP-IDF: v5.5.2, commit `" + args.idf_commit + "`",
         "- Compiler optimization: ESP-IDF size mode (`-Os`), verified from generated sdkconfig",
-        "- Optional features disabled: SPI Ethernet PHYs (W5500/KSZ8851SNL/DM9051), runtime INFO-level ESP logging",
+        "- Optional features disabled: SPI Ethernet PHYs (W5500/KSZ8851SNL/DM9051), runtime INFO-level ESP logging, PPP/PAP/CHAP, and DTLS",
+        "- Standard TLS support: retained; only DTLS (TLS over datagrams) is excluded",
+        "- OTA spare target: 20% (acceptable tolerance floor: 17%; higher is better)",
         "- Frozen manifest: `firmware/manifest.py` (core package, boot.py, main.py, asyncio)",
         "- Merged image: `" + merged.name + "`",
         "- Merged image flash offset: `0x1000`",
@@ -105,7 +114,8 @@ def main():
         "- Application image size: %d bytes" % app_size,
         "- OTA application slot size: %d bytes" % slot_size,
         "- OTA slot headroom: %d bytes (%.2f%%)" % (headroom, headroom_percent),
-        "- 10%% spare requirement: %s" % ("PASS" if passes else "FAIL"),
+        "- 20%% OTA spare target: %s" % ("PASS" if target_pass else "BELOW TARGET"),
+        "- 17%% OTA spare tolerance floor: %s" % ("PASS" if passes else "FAIL"),
         "- Filesystem partition: %d bytes" % fs_size,
         "- Filesystem free space after initial format: 100%% expected; actual runtime free space not measured",
         "- Post-boot free heap: NOT MEASURED — requires a physical ESP32 boot",
@@ -125,9 +135,10 @@ def main():
     print("PROFILE_A_LAYOUT", "PASS")
     print("SIZE_OPTIMIZATION", "PASS")
     print("OPTIONAL_FEATURES_DISABLED", "PASS")
-    print("OTA_SPARE_10_PERCENT", "PASS" if passes else "FAIL")
+    print("OTA_SPARE_TARGET_20_PERCENT", "PASS" if target_pass else "BELOW TARGET")
+    print("OTA_SPARE_TOLERANCE_FLOOR_17_PERCENT", "PASS" if passes else "FAIL")
     if not passes:
-        raise SystemExit("Firmware does not fit the OTA slot with 10% spare")
+        raise SystemExit("Firmware does not fit the OTA slot with the 17% minimum tolerance floor")
 
 
 if __name__ == "__main__":

@@ -291,3 +291,18 @@ Audit disposition: every tracked path was inventoried. No source/test/config fil
 Verified: root README links and phase counts checked against the main-branch tree/backlog. Phase 1 has 5/13 tasks marked done and remains blocked; Phases 2–5 have 0 started tasks (9, 11, 11 and 6 tasks respectively). Five pathway steps match the five backlog phases. Documentation-only change; no firmware/app code tests were run. Hardware, app SDK and asset-content checks remain outstanding.
 
 Next: owner supplies exact board pinout/photo and physical boot/resource evidence for Phase 1; a Flutter/Dart-capable runner is needed for T-113; binary assets must be exposed for content/licence inspection before rename/removal.
+
+### T-107 OTA headroom target increase — 20% (±3 percentage points) (2026-11-10) status: doing
+Goal: raise unused space in each unchanged Profile A OTA slot from the previous 12.57% to a 20% target, accepting 17–23% tolerance while preserving Wi-Fi, BLE, standard TLS, ULP and the frozen DemonCore core.
+Done when: build reproducibly excludes only features absent from the product plan; the generated sdkconfig confirms PPP/PAP/CHAP and DTLS are disabled while standard TLS, Wi-Fi, BLE and ULP remain enabled; the app image leaves at least 17% of each 1,638,400-byte OTA slot unused (20% target); lint, unix-port tests and ESP32 build/report pass; image and source hashes are recorded.
+Files: `firmware/build/build.sh`, `firmware/build/report.py`, `firmware/build/README.md`, `TASKS.md`, `PROGRESS.md`.
+
+Baseline: latest accepted build run 42797507810 passed lint, MicroPython unix-port build, all 9 core tests, ESP32 merged build and Profile A validation. It measured a 1,432,432-byte app in a 1,638,400-byte slot, leaving 205,968 bytes / 12.57%. This is below the new target. Previous experiments established that disabling ULP breaks the pinned MicroPython ESP32 build (`esp32_ulp.c` requires `esp32/ulp.h`); ULP is explicitly retained. LTO was not present in generated sdkconfig and is not claimed.
+
+Changed: build script now removes only PPP networking (PPP/PAP/CHAP) and DTLS from the pinned upstream configuration, in addition to the previously verified optional SPI Ethernet PHY drivers and INFO-level ESP logging. PPP is not part of the DemonCore product requirements; DTLS is not required by the hub's standard TCP/TLS design. Standard TLS, Wi-Fi, BLE and ULP are preserved. Report validation now fails below 17% OTA spare, reports the 20% target separately, and documents that greater than 20% is preferred. Profile A partition geometry is unchanged.
+
+Verified: shell/Python syntax and CI firmware build are pending this commit. No claim is made yet that the image reaches the target. If the measured spare remains below 17%, the build must remain failed and further reductions must be evidence-based; no feature will be disabled merely to force a percentage.
+
+Hardware blocker: physical ESP32 boot, post-boot heap (>60 KiB), GC headroom (>=20 KiB), filesystem free space (>=25%) and runtime/performance remain [HUMAN]. OTA slot spare is a build-time flash metric, not a substitute for these hardware checks.
+
+Next: inspect the new CI run's generated sdkconfig/report, verify the actual image/hash and confirm the OTA margin before distributing a new BIN.

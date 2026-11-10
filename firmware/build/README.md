@@ -9,7 +9,7 @@ This directory documents the generated ESP32 firmware image and the checks that 
 - ESP-IDF: v5.5.2, pinned commit `30aaf64524299d3bde422ca9a2848090d1bc5d0f`.
 - Profile A: two 1,600 KiB OTA slots, 16 KiB NVS, 832 KiB filesystem.
 - One merged image: `Demoncore ESP32 Master Firmware.bin`; flash at offset `0x1000`.
-- Build uses `-Os`; optional SPI Ethernet PHY drivers and runtime INFO-level ESP logging are excluded. Wi-Fi, BLE, TLS and ULP support in the underlying MicroPython/ESP-IDF build are retained.
+- Build uses `-Os`; optional SPI Ethernet PHY drivers, runtime INFO-level ESP logging, PPP/PAP/CHAP and DTLS are excluded. Wi-Fi, BLE, standard TLS and ULP support remain retained.
 
 ## Latest verified CI build (2026-11-10)
 
@@ -24,7 +24,7 @@ Workflow: [CI run 42797507810](https://github.com/AssayFlux/DemonCore/actions/ru
 | Profile A partition layout | PASS |
 | Application image | 1,432,432 bytes |
 | OTA slot | 1,638,400 bytes |
-| OTA slot spare | 205,968 bytes / 12.57% — PASS (minimum 10%) |
+| OTA slot spare | 205,968 bytes / 12.57% — historical baseline; below the new 17–23% target band |
 | Merged image | 1,493,872 bytes |
 | Merged image SHA-256 | `42e42960c3f87090138a1db491cd9bb64c252468386c09711995ed62dca45ce8` |
 
@@ -74,4 +74,4 @@ Install the exact pinned MicroPython and ESP-IDF revisions listed in `firmware/v
 firmware/build/build.sh
 ```
 
-The script generates the merged image, `report.md`, `firmware.sha256` and a copy of `partitions.csv` under this directory. It fails if the Profile A layout or 10% OTA headroom requirement is not met.
+The script generates the merged image, `report.md`, `firmware.sha256` and a copy of `partitions.csv` under this directory. The new size target is 20% OTA-slot spare (±3 percentage points): 17% is the strict acceptance floor, and more than 20% is preferred. The script fails below 17%. Profile A remains unchanged.
