@@ -151,6 +151,7 @@ def write_label(node, output_dir):
     # Add a human-readable ID beneath the QR so a printed label is scannable
     # and auditable without changing the QR payload (node:<id>).
     import xml.etree.ElementTree as ET
+    ET.register_namespace("", "http://www.w3.org/2000/svg")
     tree = ET.parse(str(path))
     root = tree.getroot()
     view_box = [float(value) for value in root.attrib["viewBox"].split()]
