@@ -158,3 +158,14 @@ Verified: previous run #52 (commit `26ff3c2d4bd24da08e91df9e10a72121322d3a09`) â
 Blocker: corrected manifest is committed next; rebuild and inspect report/artifact before marking done. Physical-board boot and runtime heap/GC measurements remain [HUMAN].
 Memory: no verified ESP32 image yet; image size and post-boot heap remain unmeasured.
 Next: rerun CI on main, validate merged image size/OTA headroom and SHA-256, then provide the binary only after artifact verification.
+
+### T-107 OTA headroom remediation â€” size-optimized ESP-IDF build (2026-11-10) status: doing
+Goal: meet the mandatory 10% OTA-slot spare while preserving the exact Profile A partition geometry and the existing MicroPython/ESP-IDF pins.
+Done when: the reproducible ESP32 build uses verified size optimization; the application image leaves at least 10% of each OTA slot unused; all CI firmware tests pass; image and source hashes are recorded; physical boot, free heap, GC headroom and filesystem free space are measured or explicitly remain [HUMAN]-blocked.
+Files: `firmware/build/build.sh`, `firmware/build/report.py`, `firmware/build/README.md`, `TASKS.md`, `PROGRESS.md`.
+
+Changed: owner authorized solving the OTA shortfall. The previous application was 1,482,080 bytes in a 1,638,400-byte slot (9.54% spare), 7,520 bytes above the strict 90%-of-slot maximum. Preserve Profile A exactly; switch the pinned ESP-IDF configuration from its upstream performance mode (`-O2`) to size mode (`-Os`), fail closed if the expected upstream setting changes, and verify the generated sdkconfig in the report. This is a measured-build change, not a partition-layout workaround.
+
+Verified: pending CI build and artifact inspection. The prior run 42768800978 passed lint and all 9 MicroPython unix-port core tests, but the ESP32 build failed only the strict OTA headroom check. Real-board boot, execution-speed impact, free heap, GC headroom and filesystem usage require the owner's ESP-WROOM-32 hardware and remain [HUMAN].
+
+Next: inspect the size-optimized build report and SHA-256; if OTA headroom is at least 10%, provide the verified image while retaining the physical hardware checks as outstanding.

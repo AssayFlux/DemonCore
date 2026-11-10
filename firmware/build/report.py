@@ -63,6 +63,14 @@ def main():
     passes = headroom >= slot_size * 0.10
     fs_size = actual["vfs"][1]
     merged_size = merged.stat().st_size
+    sdkconfig = build_dir / "sdkconfig"
+    if not sdkconfig.is_file():
+        raise SystemExit("Missing ESP-IDF sdkconfig; cannot verify size optimization")
+    sdkconfig_text = sdkconfig.read_text(encoding="utf-8")
+    if "CONFIG_COMPILER_OPTIMIZATION_SIZE=y" not in sdkconfig_text:
+        raise SystemExit("ESP-IDF build is not using size optimization (-Os)")
+    if "CONFIG_COMPILER_OPTIMIZATION_PERF=y" in sdkconfig_text:
+        raise SystemExit("ESP-IDF performance optimization (-O2) is still enabled")
 
     lines = [
         "# DemonCore ESP32 build report", "",
@@ -70,6 +78,7 @@ def main():
         "- MicroPython: v1.29.0, commit `" + args.source_commit + "`",
         "- MicroPython source archive SHA-256: `" + args.source_sha256 + "`",
         "- ESP-IDF: v5.5.2, commit `" + args.idf_commit + "`",
+        "- Compiler optimization: ESP-IDF size mode (`-Os`), verified from generated sdkconfig",
         "- Frozen manifest: `firmware/manifest.py` (core package, boot.py, main.py, asyncio)",
         "- Merged image: `" + merged.name + "`",
         "- Merged image flash offset: `0x1000`",
