@@ -74,6 +74,13 @@ class ProvisioningTests(unittest.TestCase):
             self.assertEqual(image.stat().st_mode & 0o777, 0o600)
             self.assertFalse(list(output.glob(".demoncore-nvs-*.csv")))
 
+    def test_label_contains_visible_node_id_and_svg_qr(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            label = write_label({"node_id": 314}, Path(tmp))
+            content = label.read_text(encoding="utf-8")
+            self.assertIn("Node ID: 314", content)
+            self.assertIn("<svg", content)
+
     def test_output_directory_cannot_be_inside_repo(self):
         with self.assertRaises(ValueError):
             _private_output_dir(REPO_ROOT / "tools" / "unsafe-test-output")

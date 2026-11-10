@@ -357,3 +357,11 @@ Files: `tools/provision.py`, `tools/tests/test_provision.py`, `tools/requirement
 Changed: owner authorised the implementation choice. Device secret is HMAC-SHA256(domain key, ASCII decimal node ID), matching the existing task contract. Cell key is HMAC-SHA256(domain key, `demoncore:cell:v1:` + ASCII decimal node ID), cryptographically separated from the device secret. Domain key files and provisioning output are required to remain outside the repository. Generated NVS images contain plaintext credentials; tool sets restrictive file permissions and explicitly warns that NVS/flash encryption has not been enabled. Registry and QR label outputs never include secrets. Flashing uses split bootloader, partition table, NVS, PHY-init and app images; it deliberately avoids writing a potentially contiguous merged image over the NVS partition.
 
 Verified: pending CI. The tool uses Espressif's documented NVS partition generator interface and CSV namespace/data encoding; see ESP-IDF NVS generator documentation. Hardware provisioning/serial flash remains [HUMAN].
+
+### T-112 host CI correction (2026-11-10) status: doing
+Goal: correct the first CI lint failure and make the generated printable QR label include its human-readable node ID.
+Done when: `git diff --check` passes; QR SVG includes a visible node ID and the QR payload remains the DCP node address; host-tool tests pass.
+Files: `tools/provision.py`, `tools/tests/test_provision.py`, `tools/README.md`, `PROGRESS.md`.
+
+Changed: first CI run 42808915742 confirmed the host-tools job passed all 17 tests (including six provisioning tests), but lint failed because the appended README section had one whitespace-only line. Removed it. Also added the visible node ID beneath the QR graphic and a regression test. No secrets are included in the label.
+Verified: host-tools job PASS — 17 tests; lint failure isolated to trailing whitespace, correction pending rerun. ESP32 build and unix-port firmware jobs were still running at time of this entry.

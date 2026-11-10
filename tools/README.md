@@ -8,7 +8,7 @@ Install the host-only dependencies with `python -m pip install -r tools/requirem
 
 The WebSocket and JSON Schema packages are host tooling only; they add no ESP32 firmware flash or RAM cost.
 
- 
+
 ## Manufacturing provisioning
 
 Provision one node per CSV row. The CSV must contain a unique decimal `node_id`; optional `name` and `cell` columns are metadata only. The 32-byte domain key must be supplied from a file outside this repository, either as 32 raw bytes or 64 hexadecimal characters. The tool derives the device secret as HMAC-SHA256(domain key, ASCII decimal node ID) and derives a distinct per-node cell key with the domain label `demoncore:cell:v1:`. The domain key and derived secrets are never included in labels or registry exports.

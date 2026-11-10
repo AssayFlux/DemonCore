@@ -148,6 +148,23 @@ def write_label(node, output_dir):
     image = qr.make_image(image_factory=qrcode.image.svg.SvgPathImage)
     path = output_dir / ("node-%d-label.svg" % node["node_id"])
     image.save(str(path))
+    # Add a human-readable ID beneath the QR so a printed label is scannable
+    # and auditable without changing the QR payload (node:<id>).
+    import xml.etree.ElementTree as ET
+    tree = ET.parse(str(path))
+    root = tree.getroot()
+    view_box = [float(value) for value in root.attrib["viewBox"].split()]
+    view_box[3] += 6
+    root.set("viewBox", " ".join(str(value) for value in view_box))
+    if root.get("height", "").endswith("mm"):
+        root.set("height", "%.2fmm" % view_box[3])
+    text = ET.SubElement(root, "{http://www.w3.org/2000/svg}text", {
+        "x": str(view_box[0] + view_box[2] / 2),
+        "y": str(view_box[1] + view_box[3] - 1),
+        "font-size": "3", "font-family": "sans-serif", "text-anchor": "middle",
+    })
+    text.text = "Node ID: %d" % node["node_id"]
+    tree.write(str(path), encoding="unicode", xml_declaration=True)
     path.chmod(0o600)
     return path
 
