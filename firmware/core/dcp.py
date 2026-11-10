@@ -130,7 +130,7 @@ def _scan_value(source, index, depth):
     token = source[index:end]
     if token in ("true", "false", "null"):
         return end
-    if not re.match(r"^-?(0|[1-9][0-9]*)(\\.[0-9]+)?([eE][+-]?[0-9]+)?$", token):
+    if not re.match(r"^-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?$", token):
         _fail("E_BAD_MESSAGE", "Invalid JSON value")
     return end
 
@@ -291,7 +291,7 @@ def validate(message):
     if message["t"] not in ("req", "res", "evt"):
         _fail("E_BAD_MESSAGE", "Invalid message type")
     op = message["op"]
-    if not isinstance(op, str) or len(op) > 64 or not re.match(r"^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$", op):
+    if not isinstance(op, str) or len(op) > 64 or not re.match(r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$", op):
         _fail("E_BAD_MESSAGE", "Invalid operation name")
     if not isinstance(message["args"], dict):
         _fail("E_BAD_MESSAGE", "DCP args must be an object")
