@@ -22,7 +22,7 @@ cp "$ROOT/firmware/partitions.csv" "$MPYTHON_DIR/ports/esp32/partitions-4MiB-ota
 
 make -C "$MPYTHON_DIR/mpy-cross" -j2
 make -C "$MPYTHON_DIR/ports/esp32" BOARD=ESP32_GENERIC BOARD_VARIANT=OTA FROZEN_MANIFEST="$ROOT/firmware/manifest.py" submodules
-make -C "$MPYTHON_DIR/ports/esp32" -j2 BOARD=ESP32_GENERIC BOARD_VARIANT=OTA BUILD="$BUILD_DIR" FROZEN_MANIFEST="$ROOT/firmware/manifest.py" all
+make -C "$MPYTHON_DIR/ports/esp32" -j2 BOARD=ESP32_GENERIC BOARD_VARIANT=OTA FROZEN_MANIFEST="$ROOT/firmware/manifest.py" all
 
 MERGED="$OUT_DIR/Demoncore ESP32 Master Firmware.bin"
 cp "$BUILD_DIR/firmware.bin" "$MERGED"
