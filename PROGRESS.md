@@ -318,3 +318,17 @@ Changed: added the modular monorepo architecture and exact current-to-target map
 Verified: fetched the current main tree and confirmed all current source paths referenced by the mapping exist (firmware/core, boards, build, tests, vendor; tools simulator/validator/tests/dependencies; root simulator integration test; web-flasher; protocol; app and hub roots). Confirmed the four renamed Assets remain tracked under their agreed names and the LICENSE remains at root. Documentation/path-map review only; no code tests were run because no code moved. The subsequent migration task must run baseline and post-move tests.
 
 Next: begin the staged migration as a separate task, starting with host tools. Preserve import/CLI compatibility and update CI/docs references before declaring that stage complete.
+
+
+### T-110 Identity storage (2026-11-10) status: doing
+Goal: implement persistent ESP32 NVS storage for the numeric node ID, 32-byte device secret, 32-byte cell key, transmit/receive counters and claimed state.
+Done when: values use the pinned MicroPython ESP32 NVS API; secrets are never logged/printed; claimed state round-trips; malformed/partial values fail closed; fake-NVS tests cover read/write/tamper/wipe.
+Files: `firmware/core/identity.py`, `firmware/tests/test_core.py`, `TASKS.md`, `PROGRESS.md`.
+
+Baseline: latest main CI run 42802413021 has lint PASS and all 9 existing firmware core tests PASS under the pinned MicroPython v1.29.0 unix port; ESP32 build is still running. No source changes have yet been tested in this entry.
+
+Changed: implementation and fake-NVS tests are being added. The implementation follows the exact MicroPython v1.29.0 `esp32.NVS` API (`set_blob`, `get_blob`, `set_i32`, `get_i32`, `erase_key`, `commit`) verified against the pinned upstream source and its ESP32 NVS test. Secret values are held as fixed-size blobs; 64-bit counters are encoded as fixed-width big-endian blobs. No encryption/eFuse/flash-encryption setting is changed.
+
+Verified: pending MicroPython unix-port CI after commit. The NVS hardware driver itself cannot be exercised on the unix port; only its API contract is matched to the pinned upstream ESP32 implementation and its upstream test. Physical NVS persistence across power loss remains a hardware check.
+
+Next: run the new identity tests on the pinned MicroPython unix port, inspect the ESP32 build and size report, then close T-110 only if the tests pass.

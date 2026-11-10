@@ -5,6 +5,7 @@ import gc
 
 from core.config import load_config
 from core.log import LogRing
+from core.identity import IdentityStore
 from core.scheduler import Scheduler, asyncio
 from core.state import load_state, mark_stable, prepare_boot
 
@@ -146,8 +147,100 @@ def test_dcp_routing_and_error_reply():
     assert reply["id"] == request["id"] and reply["op"] == request["op"]
     assert dcp.decode(dcp.encode(reply)) == reply
 
+
+class FakeNVS:
+    def __init__(self):
+        self.values = {}
+        self.commits = 0
+    def set_blob(self, key, value):
+        self.values[key] = bytes(value)
+    def get_blob(self, key, buffer):
+        if key not in self.values or not isinstance(self.values[key], bytes):
+            raise OSError("not found")
+        value = self.values[key]
+        if len(value) > len(buffer):
+            raise OSError("buffer too small")
+        buffer[:len(value)] = value
+        return len(value)
+    def set_i32(self, key, value):
+        self.values[key] = int(value)
+    def get_i32(self, key):
+        if key not in self.values or not isinstance(self.values[key], int):
+            raise OSError("not found")
+        return self.values[key]
+    def erase_key(self, key):
+        if key not in self.values:
+            raise OSError("not found")
+        del self.values[key]
+    def commit(self):
+        self.commits += 1
+
+
+def test_identity_store_roundtrip_and_claim_state():
+    nvs = FakeNVS()
+    store = IdentityStore(nvs)
+    secret = bytes(range(32))
+    cell_key = bytes(range(32, 64))
+    assert store.load() is None
+    store.store(123456789, secret, cell_key, 17, 23, True)
+    loaded = store.load()
+    assert loaded["node_id"] == 123456789
+    assert loaded["device_secret"] == secret
+    assert loaded["cell_key"] == cell_key
+    assert loaded["tx_counter"] == 17 and loaded["rx_counter"] == 23
+    assert loaded["claimed"] is True
+    assert nvs.commits == 1
+    store.store(123456789, secret, cell_key, 18, 24, False)
+    assert store.load()["claimed"] is False
+    assert store.load()["tx_counter"] == 18
+
+
+def test_identity_store_tamper_and_validation():
+    nvs = FakeNVS()
+    store = IdentityStore(nvs)
+    secret = b"s" * 32
+    store.store(7, secret, b"k" * 32)
+    nvs.values["dev_secret"] = b"tampered"
+    rejected = False
+    try:
+        store.load()
+    except ValueError:
+        rejected = True
+    assert rejected
+    for bad_id in (0, -1, True, 1 << 64):
+        rejected = False
+        try:
+            store.store(bad_id, secret, b"k" * 32)
+        except ValueError:
+            rejected = True
+        assert rejected
+    for bad_secret in (b"", b"x" * 31, "not-bytes"):
+        rejected = False
+        try:
+            store.store(8, bad_secret, b"k" * 32)
+        except ValueError:
+            rejected = True
+        assert rejected
+
+
+def test_identity_store_wipe_and_no_secret_logging():
+    nvs = FakeNVS()
+    store = IdentityStore(nvs)
+    secret = b"secret-value-not-for-logs-000000"
+    assert len(secret) == 32
+    store.store(9, secret, b"c" * 32, claimed=True)
+    ring = LogRing(8)
+    assert all(secret.hex() not in str(item) for item in ring.snapshot())
+    store.wipe()
+    assert store.load() is None
+    assert nvs.commits == 2
+
+
 def run():
     tests = [test_config_defaults, test_config_overrides, test_log_ring,
+             test_identity_store_roundtrip_and_claim_state,
+             test_identity_store_tamper_and_validation,
+             test_identity_store_wipe_and_no_secret_logging,
              test_crash_counter_and_safe_mode, test_corrupt_state_fails_safe,
              test_watchdog_feed_is_in_scheduler_loop, test_dcp_shared_vectors,
              test_dcp_strict_json_and_limits, test_dcp_routing_and_error_reply]

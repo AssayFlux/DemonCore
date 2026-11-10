@@ -77,7 +77,7 @@ Goal: repository, protocol, pin safety, firmware core, identity, build/flash pip
 - Verify: vectors pass against simulator; start 100 nodes and query all.
 
 ### T-110 Identity storage
-- Status: todo | Size: M | Depends: T-104
+- Status: doing | Size: M | Depends: T-104
 - Touch: `firmware/core/identity.py`, `firmware/tests/`
 - Done when: node ID, device secret, cell key and counters stored in NVS; secrets never logged/printed; claimed flag controls behaviour; tests cover read/write/tamper/wipe.
 - Verify: fake-NVS tests and assertion that no secret appears in log buffer.
