@@ -81,7 +81,7 @@ Goal: repository, protocol, pin safety, firmware core, identity, build/flash pip
 - Verify: fake-domain-key tests; [HUMAN] provision 3 boards and confirm unique claimed IDs.
 
 ### T-113 App skeleton
-- Status: todo | Size: M | Depends: T-109
+- Status: blocked | Size: M | Depends: T-109
 - Touch: `app/`
 - Done when: Flutter project builds; NodeLink interface and WebSocket adapter; Fleet lists simulator nodes and detail view shows sys.info.
 - Verify: flutter analyze/test and app against 100 simulated nodes without lag.
