@@ -91,7 +91,7 @@ Partition Profile A from the owner brief is two 1,600 KB firmware slots, 16 KB N
 - AES-CTR plus HMAC is the specified encrypted-frame direction; nonce and directional key rules must be documented and tested before implementation.
 - No custom cryptography, debug authentication bypass, secret logging or secret commits.
 
-Unresolved: precise re-claim/release behaviour, key-loss policy, and any hardware security fuses/secure boot. These require owner decisions. Never burn eFuses or enable hardware locks as an autonomous action.
+Owner decision (2026-11-10): a previously claimed node may be released only by an owner-signed release command. A physical BOOT-button hold must never erase or reset a claimed identity, device secret or cell key. BOOT may open the initial timed claim window only while the node is unclaimed; the 5-second BOOT hold for safe mode preserves all identity and keys. Release verification must fail closed and use the authenticated owner-key path; do not treat a caller-supplied boolean or unauthenticated BLE request as proof of owner authorisation. Key-loss recovery and hardware security fuses/secure boot remain unresolved owner decisions. Never burn eFuses or enable hardware locks as an autonomous action.
 
 ## 6. DCP protocol contract
 
@@ -194,7 +194,7 @@ Stop at each gate and report to the owner before proceeding to the next phase.
 
 Do not infer answers to these:
 - Licence: Apache-2.0 was explicitly confirmed by the owner; preserve the existing licence text.
-- Re-claiming: physical hold-button wipe or owner-signed release only?
+- Re-claiming: DECIDED — owner-signed release command only; BOOT-button hold never wipes a claimed node.
 - Hub hosting: PC, Raspberry Pi or cloud?
 - First fleet geography and size.
 - Who can deploy code besides owner.

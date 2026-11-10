@@ -83,9 +83,9 @@ Goal: repository, protocol, pin safety, firmware core, identity, build/flash pip
 - Verify: fake-NVS tests and assertion that no secret appears in log buffer.
 
 ### T-111 Claim state machine
-- Status: todo | Size: L | Depends: T-110, T-105
-- Touch: `firmware/core/claim.py`, `firmware/core/transport/ble.py`, `firmware/tests/`
-- Done when: unclaimed/claim_window/claimed follow plan §14; BOOT opens timed window; BLE pairing-code claim stores ID, secret, cell key, name and reboots; unclaimed node answers nothing else; claimed node cannot reopen window without owner-signed release.
+- Status: doing | Size: L | Depends: T-110, T-105
+- Touch: `firmware/core/claim.py`, `firmware/core/transport/ble.py`, `firmware/tests/`, `docs/PLAN.md`, `TASKS.md`, `PROGRESS.md`
+- Done when: unclaimed/claim_window/claimed follow plan §5; BOOT opens timed window only for an unclaimed node; BLE pairing-code claim stores ID, secret, cell key, name and reboots; unclaimed node answers nothing else; claimed node cannot reopen the claim window or erase identity through BOOT; release requires an owner-signed command verified fail-closed.
 - Verify: transition/timeout tests; [HUMAN] claim real board from phone client and verify persistence over reboot.
 
 ### T-112 Provisioning tool

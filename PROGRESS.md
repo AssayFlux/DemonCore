@@ -332,3 +332,19 @@ Changed: implementation and fake-NVS tests are being added. The implementation f
 Verified: GitHub Actions run 42802888878, commit `e8d422d05cd0e9601148c28b65d95dbd515965af`: lint PASS; pinned MicroPython v1.29.0 unix-port build PASS; all 12 firmware core tests PASS, including identity round-trip/claim-state, malformed/tampered field rejection, input validation, wipe and no-secret-in-log-buffer checks. Exact test output: `PASS test_identity_store_roundtrip_and_claim_state`, `PASS test_identity_store_tamper_and_validation`, `PASS test_identity_store_wipe_and_no_secret_logging`, `PASS: 12 firmware core tests`. NVS hardware driver is not available on unix; its API contract matches the pinned upstream ESP32 source/test. Physical NVS persistence across power loss remains untested.
 
 Next: T-107 remains blocked: the most recent completed ESP32 build (run 42802413021) produced 1,390,368-byte app in a 1,638,400-byte slot, leaving 248,032 bytes / 15.14%, below the 17% floor. Continue with an evidence-based OTA size reduction; preserve Wi-Fi, BLE, standard TLS, ULP and Profile A. Physical boot/resource measurements remain [HUMAN].
+
+### T-111 Claim state machine (2026-11-10) status: doing
+Goal: implement the unclaimed → timed claim-window → claimed lifecycle with owner-authorised release only.
+Done when: BOOT opens a timed window only for an unclaimed node; BLE pairing-code claim persists the assigned identity and reboots; unclaimed nodes answer no normal operations; claimed identity cannot be erased or re-claimed by BOOT; owner-signed release is verified fail-closed; transition/timeout/security tests pass.
+Files: `firmware/core/claim.py`, `firmware/core/transport/ble.py`, `firmware/tests/`, `docs/PLAN.md`, `TASKS.md`, `PROGRESS.md`.
+
+Owner decision recorded before implementation: previously claimed nodes may be released only by an owner-signed command. BOOT-button hold never wipes identity, device secret or cell key. The 5-second BOOT safe-mode action preserves identity. An unauthenticated request or caller-provided boolean is not proof of owner authorisation.
+
+Baseline: main HEAD `ad8c99c56aea48df0a8412eb9ee916366db1242b`. CI run 42803129341: lint PASS; pinned MicroPython unix-port build and all 12 firmware core tests PASS. ESP32 merged build/report FAILS the OTA gate: 1,392,416-byte app in a 1,638,400-byte slot, 245,984 bytes spare (15.01%), below the 17% strict floor and 20% target. T-107 remains blocked; no accepted flashable image. No physical-board tests were run.
+
+Changed: owner release policy added to §5 and §15 of `docs/PLAN.md`; T-111 scope and acceptance criteria updated. No firmware code changed in this setup entry.
+
+Verified: documentation diff review; baseline evidence above from GitHub Actions run 42803129341. The existing BLE adapter file does not yet exist. Physical claim-from-phone and NVS persistence tests remain [HUMAN].
+
+Next: implement the claim state machine and BLE claim-window interface without inventing an unauthenticated release path; verify against MicroPython unix-port tests and pinned ESP32 API documentation.
+
