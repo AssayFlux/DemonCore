@@ -22,3 +22,13 @@ Verified: both pushes to `main` triggered CI. Run #1 for `0d84a4d93e081783064595
 Blocker: repository already contains a full Apache-2.0 LICENSE, not a placeholder. Preserved it. Owner must confirm whether Apache-2.0 is intentional or specify the desired licence before T-101 can be marked done.
 Memory: no firmware code or binaries changed; image size and heap not measured.
 Next: ask owner to confirm the licence; once confirmed, close T-101 and proceed to T-102.
+
+
+### T-101 licence confirmation and closure (2026-11-10) status: done
+Goal: close repository foundation after the owner confirms the existing licence.
+Done when: required folder READMEs exist; ignore rules cover generated artifacts and secrets; push CI lint passes; Apache-2.0 is explicitly approved and preserved.
+Files: `TASKS.md`, `PROGRESS.md`.
+Changed: recorded the owner's explicit approval to keep Apache-2.0; changed T-101 from blocked to done. No licence text was altered.
+Verified: prior direct-to-main CI runs #1 and #2 passed, including `git diff --check HEAD^ HEAD`; current main head before this closure was `5ffcb45b5798d09151adf2cf045b358f4ba652bb`. Baseline suite: no test suite existed at T-101 start; no additional baseline tests available. This closure is documentation-only.
+Memory: no firmware changed; image size and heap not measured.
+Next: T-102 DCP v1 specification is the first eligible task. Implement only under `protocol/`, then validate all vectors against the schema.
