@@ -15,7 +15,7 @@ Goal: repository, protocol, pin safety, firmware core, identity, build/flash pip
 - Verify: push directly to `main` and observe CI pass.
 
 ### T-102 DCP v1 specification
-- Status: todo | Size: M | Depends: T-101
+- Status: done | Size: M | Depends: T-101
 - Touch: `protocol/`
 - Done when: `dcp.md` defines fields `v,id,src,dst,t,op,args`, types `req,res,evt`, errors, node/group/tag/cell/`*` addressing, size limits and fragmentation; JSON schema validates messages; `ops.json` defines `sys.info,sys.ping,gpio.mode,gpio.read,gpio.write` with types/ranges/units; at least 20 valid and 10 invalid vectors exist.
 - Verify: tool validates every vector against schema and fails on mismatch.
@@ -338,7 +338,6 @@ Goal: shared jobs, safe code delivery and extensibility.
 
 ## Open questions for the owner
 
-- Confirm intended repository licence. Existing repository currently contains an Apache License 2.0 text; T-101 acceptance criteria call for a placeholder pending owner choice. Do not replace or reinterpret it without explicit confirmation.
 - Re-claiming: hold-button wipe or owner-signed release only?
 - Hub hosting: PC/Raspberry Pi or cloud?
 - First fleet size/layout: one building, one site or multiple places?
