@@ -227,3 +227,15 @@ Changed: CI run 42779305209 compiled the app at 1,497,968 bytes (8.57% spare), b
 Verified: pending CI. Previous run 42779305209: lint PASS; MicroPython unix-port build and 9 tests PASS; ESP32 compilation PASS; report FAIL (syntax error). Provisional app size 1,497,968 bytes, OTA spare 140,432 bytes (8.57%), 23,408 bytes short of the 10% target. No accepted binary artifact from that run.
 
 Next: inspect LTO build report and actual binary; if LTO does not meet 10%, continue with source-verified optimization only. Real-board boot, stack high-water, free heap, GC headroom and filesystem free space remain [HUMAN].
+
+
+### T-107 CI report correction — remove unsupported LTO assertion (2026-11-10) status: doing
+Goal: make the report validate the configuration actually produced by the pinned ESP-IDF build, without claiming LTO that is not active.
+Done when: build script no longer injects unverified LTO symbols; report checks only observed -Os/optional-feature settings and emits hashes/partition/headroom; CI report passes with >10% OTA spare.
+Files: `firmware/build/build.sh`, `firmware/build/report.py`, `firmware/build/README.md`, `PROGRESS.md`.
+
+Changed: run 42790964003 compiled the application to 1,432,432 bytes in a 1,638,400-byte OTA slot (205,968 bytes / 12.57% spare). Lint and all 9 MicroPython unix-port tests passed. The build job failed only at report validation because generated sdkconfig did not contain CONFIG_COMPILER_LTO_LINKTIME=y; thus the earlier assertion that LTO was active was unsupported. Removed the unverified LTO injection/assertion and removed the README/report claim. Kept verified -Os and optional SPI Ethernet/logging exclusions. No partition, Wi-Fi, BLE, TLS, ULP or DemonCore core changes.
+
+Verified: pending rerun CI. Physical ESP32 boot, post-boot heap, GC headroom and runtime filesystem free-space remain [HUMAN]; cloud CI cannot measure these.
+
+Next: verify the corrected report in CI; then request owner to connect the ESP32 over USB/serial for T-108/T-107 hardware checks.

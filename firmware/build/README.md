@@ -17,7 +17,7 @@ configuration changes, and the report verifies the generated sdkconfig.
 Disabling these optional facilities means this image does not provide SPI
 Ethernet; it is not part of the current hardware plan.
 
-LTO may increase task stack use due to cross-translation-unit inlining, so physical stack/heap profiling remains mandatory before production. The report checks the exact Profile A layout and at least 10% OTA-slot spare,
+The report checks the exact Profile A layout and at least 10% OTA-slot spare,
 and records source/image hashes. Generated binaries and intermediate build
 products are CI artifacts, not committed. Post-boot heap, GC headroom, runtime
 filesystem free space and performance require physical ESP32 measurements.

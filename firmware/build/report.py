@@ -81,9 +81,6 @@ def main():
         raise SystemExit("ESP-IDF build is not using size optimization (-Os)")
     if "CONFIG_COMPILER_OPTIMIZATION_PERF=y" in sdkconfig_text:
         raise SystemExit("ESP-IDF performance optimization (-O2) is still enabled")
-    for setting in ("CONFIG_COMPILER_LTO_LINKTIME", "CONFIG_COMPILER_LTO_COMPILETIME"):
-        if setting + "=y" not in sdkconfig_text:
-            raise SystemExit("ESP-IDF LTO setting is not enabled: " + setting)
     enabled_optional = [name for name in OPTIONAL_DISABLED if name + "=y" in sdkconfig_text]
     if enabled_optional:
         raise SystemExit("Optional ESP-IDF features unexpectedly enabled: " + ", ".join(enabled_optional))
@@ -95,7 +92,6 @@ def main():
         "- MicroPython source archive SHA-256: `" + args.source_sha256 + "`",
         "- ESP-IDF: v5.5.2, commit `" + args.idf_commit + "`",
         "- Compiler optimization: ESP-IDF size mode (`-Os`), verified from generated sdkconfig",
-        "- Link-time optimization: enabled at link and component compile time; hardware stack profiling required",
         "- Optional features disabled: SPI Ethernet PHYs (W5500/KSZ8851SNL/DM9051), runtime INFO-level ESP logging",
         "- Frozen manifest: `firmware/manifest.py` (core package, boot.py, main.py, asyncio)",
         "- Merged image: `" + merged.name + "`",
