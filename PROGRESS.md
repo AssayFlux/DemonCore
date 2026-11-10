@@ -64,3 +64,8 @@ Verified: CPython 3.13.5 mirror run of `firmware/tests/test_core.py`: 6 tests pa
 Blocker: no `micropython` executable (unix port) is installed in the environment, and CI does not yet run the unix-port tests. Therefore the required unix-port verification has not run. Per repo rules, this task remains blocked; no MicroPython runtime or hardware behaviour is claimed as verified. Module flash/RAM measurements also remain pending the pinned build task.
 Memory: no ESP32 firmware image built; heap/image budgets not measured.
 Next: T-109 Simulator node is the next eligible task (depends only on T-102); T-103 remains blocked pending physical board-label photo verification.
+
+### T-109 Simulator node (2026-11-10) status: doing
+Goal: implement a host-side WebSocket simulator that runs multiple distinct DCP nodes and enforces the shared protocol and board pin policy.
+Done when: simulator supports `sys.info`, `sys.ping`, `gpio.mode`, `gpio.read`, `gpio.write`; `--count N` creates N distinct node IDs; shared vectors validate; integration test starts 100 nodes and queries each.
+Files: `tools/sim_node.py`, `tools/requirements.txt`, `tests/` only.
