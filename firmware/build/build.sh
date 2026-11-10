@@ -14,14 +14,14 @@ test "$ACTUAL_MPYTHON_COMMIT" = "$MPYTHON_COMMIT" || { echo "Unexpected MicroPyt
 test "$ACTUAL_IDF_COMMIT" = "$IDF_COMMIT" || { echo "Unexpected ESP-IDF commit: $ACTUAL_IDF_COMMIT" >&2; exit 2; }
 
 OUT_DIR="$ROOT/firmware/build"
-BUILD_DIR="$OUT_DIR/esp32-build"
+BUILD_DIR="$MPYTHON_DIR/ports/esp32/build-ESP32_GENERIC-OTA"
 mkdir -p "$OUT_DIR" "$BUILD_DIR"
 
 SOURCE_SHA256="$(git -C "$MPYTHON_DIR" archive --format=tar "$MPYTHON_COMMIT" | gzip -n | sha256sum | awk '{print $1}')"
 cp "$ROOT/firmware/partitions.csv" "$MPYTHON_DIR/ports/esp32/partitions-4MiB-ota.csv"
 
 make -C "$MPYTHON_DIR/mpy-cross" -j2
-make -C "$MPYTHON_DIR/ports/esp32" BOARD=ESP32_GENERIC BOARD_VARIANT=OTA BUILD="$BUILD_DIR" FROZEN_MANIFEST="$ROOT/firmware/manifest.py" submodules
+make -C "$MPYTHON_DIR/ports/esp32" BOARD=ESP32_GENERIC BOARD_VARIANT=OTA FROZEN_MANIFEST="$ROOT/firmware/manifest.py" submodules
 make -C "$MPYTHON_DIR/ports/esp32" -j2 BOARD=ESP32_GENERIC BOARD_VARIANT=OTA BUILD="$BUILD_DIR" FROZEN_MANIFEST="$ROOT/firmware/manifest.py" all
 
 MERGED="$OUT_DIR/Demoncore ESP32 Master Firmware.bin"
