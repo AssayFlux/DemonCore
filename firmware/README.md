@@ -1,7 +1,7 @@
 # DemonCore ESP32 firmware workspace
 
-**Workspace:** `firmware/`  
-**Target:** ESP-WROOM-32, 38-pin, 4 MiB flash, no PSRAM  
+**Workspace:** `firmware/`
+**Target:** ESP-WROOM-32, 38-pin, 4 MiB flash, no PSRAM
 **Runtime:** pinned MicroPython ESP32_GENERIC build
 
 This is the firmware-builder directory. ESP32 MicroPython source, board profiles, core runtime, optional plugins, partition layout, frozen-module manifest and tests belong here. Do not put Flutter/Dart app code here.

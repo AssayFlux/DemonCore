@@ -1,7 +1,7 @@
 # DemonCore Android app builder
 
-**Workspace:** `app/`  
-**Product:** Flutter Android control app  
+**Workspace:** `app/`
+**Product:** Flutter Android control app
 **Shared contract:** [DCP](../protocol/README.md)
 
 This is the app-builder directory. All Flutter/Dart source, UI, app assets, transport adapters and app tests belong here. Do not put ESP32 MicroPython code here.
