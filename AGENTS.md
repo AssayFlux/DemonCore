@@ -4,7 +4,7 @@ This file is the working contract for every contributor and AI session. Read it 
 
 ## Product
 
-DemonCore is firmware for ESP-WROOM-32 (38-pin, 4 MB flash, no PSRAM), plus a Flutter app and self-hosted hub, sharing the DemonCore Protocol (DCP). The firmware ships as one merged MicroPython `.bin` with the core frozen in. Target scale is 10,000 nodes. Core priorities: owner-issued numeric identity and password; owner-key-authenticated communication after claim; authorised code jobs to nodes/groups/cells; OTA after initial USB flash; live 3D pin board; fit within 4 MB flash and approximately 100 KB free RAM.
+DemonCore is three cooperating products sharing the DemonCore Protocol (DCP): ESP-WROOM-32 firmware (4 MB flash, no PSRAM), a Flutter Android control app, and a self-hosted fleet hub. The simulator is host-side development/test tooling, not a fourth product. The firmware ships as one merged MicroPython `.bin` with the core frozen in. Target scale is 10,000 nodes. Core priorities: owner-issued numeric identity and password; owner-key-authenticated communication after claim; authorised code jobs to nodes/groups/cells; OTA after initial USB flash; live 3D pin board; fit within 4 MB flash and approximately 100 KB free RAM.
 
 The master plan is `docs/PLAN.md`. The ordered implementation backlog is `TASKS.md`.
 
@@ -55,13 +55,14 @@ For every new operation: (1) update `protocol/ops.json` and `protocol/dcp.md`; (
 ## Repository layout
 
 ```
-firmware/   vendor/, core/, plugins/, boards/, manifest.py, partitions.csv, build/
-app/        Flutter project
-hub/        broker config, registry, scheduler, OTA server (Docker Compose)
-protocol/   dcp.md, schemas, ops.json, vectors/
-tools/      flash.py, provision.py, ota_push.py, sim_node.py, dcctl
-web-flasher/ static esptool-js page
-docs/       plan, setup, pin guide, plugin guide
+firmware/   ESP32 MicroPython firmware; enter firmware/build/ to build the merged BIN
+app/        Flutter Android app builder; all app source, UI and tests live here
+hub/        self-hosted control plane: broker, registry, APIs, scheduler and OTA
+protocol/   shared DCP spec, schemas, operations and vectors
+tools/      host-side simulator, pin validator and developer/flash/provision tools
+Assets/     supplied board models/images; inspect content and licence before use
+web-flasher/ browser-based firmware flasher
+docs/       North Star references, architecture, setup, pin and release guides
 ```
 
 Each top-level project folder and meaningful subfolder gets a short README explaining its purpose once created.
@@ -114,3 +115,12 @@ If a check cannot run in the current environment, state why in `PROGRESS.md` and
 3. Select the first eligible task and restate it in the work log.
 4. Work, verify, log and commit.
 5. Leave `PROGRESS.md` ready for the next session.
+
+
+## Workspace navigation and asset handling
+
+- Firmware work belongs under `firmware/`; the merged ESP32 image builder is `firmware/build/build.sh`.
+- Flutter app work belongs under `app/`. Do not put app code under `firmware/` or host utilities under the app.
+- Hub work belongs under `hub/`; shared wire contracts belong under `protocol/`.
+- Before renaming or deleting any asset, inspect its actual contents, identify every reference, and verify its licence. A filename or extension alone is not enough evidence.
+- The root `NORTH_STAR.md` defines the destination; `TASKS.md` defines the implementation order.

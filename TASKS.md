@@ -1,8 +1,16 @@
 # DemonCore — Task Backlog
 
-Follow the rules in `AGENTS.md`. Work strictly top to bottom: select the first `todo` task whose dependencies are all `done`. One task at a time. `[HUMAN]` means a person with the required board/phone must perform or confirm the step; write exact steps and wait.
+Follow `NORTH_STAR.md` and the rules in `AGENTS.md`. Work strictly top to bottom: select the first `todo` task whose dependencies are all `done`. One task at a time. `[HUMAN]` means a person with the required board/phone must perform or confirm the step; write exact steps and wait. The five delivery phases below are the five-step completion pathway.
 
 Statuses: `todo`, `doing`, `done`, `blocked`.
+
+## Repository documentation baseline
+
+### T-000 North Star, repository map and audit
+- Status: done | Size: S | Depends: none
+- Touch: `NORTH_STAR.md`, `README.md`, `AGENTS.md`, `TASKS.md`, `PROGRESS.md`, `docs/PLAN.md`, `docs/README.md`, `docs/REPO_AUDIT.md`, `app/README.md`, `firmware/README.md`
+- Done when: one North Star defines the three product components and non-negotiable constraints; root README has clear app/firmware entry points, action cards and five-step pathway; architecture and working rules agree; audit records safe removals/retentions and asset limitations; progress records evidence and blockers.
+- Verify: compare all links against the tracked repository tree; confirm all five phase counts against this backlog; confirm no licence or binary asset was altered without inspection.
 
 ## Phase 1 — Foundation
 

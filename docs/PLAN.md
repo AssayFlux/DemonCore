@@ -1,13 +1,16 @@
 # DemonCore — Master Plan
 
-**Status:** Planning baseline, derived from the owner's project brief and task backlog. This document records agreed goals and constraints; it does not silently decide unresolved security, hardware, hosting or licensing questions. Where a detail is not specified, implementation must stop and ask rather than guess.
+**Status:** Architecture baseline. The product destination is defined in [NORTH_STAR.md](../NORTH_STAR.md); this document records detailed architecture and constraints. It does not silently decide unresolved security, hardware or hosting questions. Where a detail is not specified, implementation must stop and ask rather than guess.
 
 ## 1. Product vision
 
-DemonCore is two products sharing one versioned protocol, DCP:
+DemonCore is three cooperating products sharing one versioned protocol, DCP:
 
 1. **Device firmware:** MicroPython for the ESP-WROOM-32 38-pin board (4 MB flash, no PSRAM), distributed as one merged `.bin` with the DemonCore core frozen into the image.
-2. **Control plane:** Flutter app plus self-hosted hub. The hub comprises an MQTT broker, node registry, job scheduler and OTA server. The target fleet is up to 10,000 nodes.
+2. **Control app:** Flutter Android application for provisioning, claiming, fleet/device control, logs, jobs/rules and OTA.
+3. **Self-hosted hub:** MQTT broker, node registry, REST/WebSocket APIs, job scheduler and OTA server.
+
+The simulator is host-side development and test tooling. The target fleet is up to 10,000 nodes.
 
 The system must issue each node a unique numeric ID and password; ensure a claimed node communicates only with apps/nodes proving owner-key possession; allow authorised users to deploy one job to a node, group or cell; support OTA after the first USB flash; provide a live 3D board/pin view; and fit the constrained flash/RAM budget.
 
@@ -190,7 +193,7 @@ Stop at each gate and report to the owner before proceeding to the next phase.
 ## 15. Explicit owner decisions
 
 Do not infer answers to these:
-- Licence: repository currently has Apache-2.0 text; confirm whether intentional.
+- Licence: Apache-2.0 was explicitly confirmed by the owner; preserve the existing licence text.
 - Re-claiming: physical hold-button wipe or owner-signed release only?
 - Hub hosting: PC, Raspberry Pi or cloud?
 - First fleet geography and size.
@@ -200,4 +203,4 @@ Do not infer answers to these:
 
 ## 16. Source of truth and change control
 
-The owner's original project brief establishes hard constraints and priorities. `AGENTS.md` defines working rules; `TASKS.md` defines task order, scope, dependencies and acceptance; this plan explains intended architecture. If these documents conflict or a new decision is needed, stop and ask the owner. Record approved decisions in the plan and progress log before implementing them.
+The owner's original project brief establishes hard constraints and priorities. `NORTH_STAR.md` defines the product destination; `AGENTS.md` defines working rules; `TASKS.md` defines task order, scope, dependencies and acceptance; this plan explains detailed architecture. If these documents conflict or a new decision is needed, stop and ask the owner. Record approved decisions in the plan and progress log before implementing them.

@@ -176,7 +176,6 @@ Done when: the build script executes in CI, the image meets the strict 10% OTA-s
 Files: `firmware/build/build.sh` file mode; `PROGRESS.md`.
 
 Changed: the first run after the optimization commit passed lint and all 9 MicroPython unix-port core tests, but the ESP32 job stopped before invoking the build because the Git tree recorded `firmware/build/build.sh` as non-executable. Restore its executable bit (100755); no firmware source or partition change.
-
 Verified: CI run 42770564358 — lint PASS; MicroPython unix-port build and all 9 tests PASS; ESP32 build did not start (exit 126, permission denied). No new firmware artifact was produced.
 
 Next: rerun CI and inspect the actual size-optimized ESP32 build, OTA headroom, merged image and checksum. Physical hardware checks remain [HUMAN].
@@ -279,3 +278,16 @@ Blocker: physical ESP32 boot, post-boot free heap (>60 KiB target), GC headroom 
 Transport status: underlying MicroPython/ESP-IDF Wi-Fi and BLE support is retained in the compiled platform, but DemonCore BLE and Wi-Fi DCP adapters, pairing/claim and network endpoints are not implemented. Config defaults remain BLE=false and Wi-Fi=false. Follow T-111/T-201/T-202 in backlog order; do not flip flags as a substitute for implementation.
 
 Next: owner flashes the CI-verified image and returns boot log plus REPL memory/filesystem diagnostics. Then continue the ordered transport implementation tasks when their dependencies/gates are satisfied.
+
+### T-000 North Star, repository map and audit (2026-11-10) status: done
+Goal: establish one authoritative product destination, make app/firmware entry points obvious, reconcile project documents and audit tracked files/assets without unsafe deletion.
+Done when: North Star defines the three product components and hard constraints; root README includes action cards and five-step pathway; directory entry points are clear; audit records keep/remove/rename decisions; progress records evidence and blockers.
+Files: `NORTH_STAR.md`, `README.md`, `AGENTS.md`, `TASKS.md`, `PROGRESS.md`, `docs/PLAN.md`, `docs/README.md`, `docs/REPO_AUDIT.md`, `app/README.md`, `firmware/README.md`.
+
+Changed: added the North Star; rebuilt root README with a workspace map, action cards and five-step pathway; aligned AGENTS, TASKS and PLAN around ESP32 firmware, Flutter app and self-hosted hub sharing DCP; clarified app/firmware entry points; added the repository audit and updated app/firmware READMEs. Apache-2.0 was preserved.
+
+Audit disposition: every tracked path was inventoried. No source/test/config file was proven unnecessary, so none was deleted. Assets contains STL, 3MF, ZIP and PNG files. The repository interface exposed names and sizes but not binary contents; no asset was renamed, deleted or declared licensed. This limitation and follow-up are documented in `docs/REPO_AUDIT.md`.
+
+Verified: root README links and phase counts checked against the main-branch tree/backlog. Phase 1 has 5/13 tasks marked done and remains blocked; Phases 2–5 have 0 started tasks (9, 11, 11 and 6 tasks respectively). Five pathway steps match the five backlog phases. Documentation-only change; no firmware/app code tests were run. Hardware, app SDK and asset-content checks remain outstanding.
+
+Next: owner supplies exact board pinout/photo and physical boot/resource evidence for Phase 1; a Flutter/Dart-capable runner is needed for T-113; binary assets must be exposed for content/licence inspection before rename/removal.
