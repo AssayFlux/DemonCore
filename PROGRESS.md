@@ -32,3 +32,13 @@ Changed: recorded the owner's explicit approval to keep Apache-2.0; changed T-10
 Verified: prior direct-to-main CI runs #1 and #2 passed, including `git diff --check HEAD^ HEAD`; current main head before this closure was `5ffcb45b5798d09151adf2cf045b358f4ba652bb`. Baseline suite: no test suite existed at T-101 start; no additional baseline tests available. This closure is documentation-only.
 Memory: no firmware changed; image size and heap not measured.
 Next: T-102 DCP v1 specification is the first eligible task. Implement only under `protocol/`, then validate all vectors against the schema.
+
+### T-102 DCP v1 specification (2026-11-10) status: done
+Goal: define the shared DCP v1 envelope, addressing, operation contracts, limits, errors and reusable test vectors before any transport implementation.
+Done when: `dcp.md` specifies fields `v,id,src,dst,t,op,args`, types `req,res,evt`, error responses, node/group/tag/cell/`*` addressing, limits and transport fragmentation; JSON Schema validates the envelope; `ops.json` defines `sys.info,sys.ping,gpio.mode,gpio.read,gpio.write` with argument/response types and ranges; at least 20 valid and 10 invalid vectors exist.
+Files: `protocol/` only (specification, schema, operation catalogue, validator, vectors and README).
+Changed: added the normative DCP v1.0 envelope and address grammar; defined 4,096-byte encoded-message and bounded-reassembly limits; documented standard error codes; added Draft 2020-12 JSON Schema, five operation request/response contracts, a host-side vector validator, 23 valid vectors and 12 invalid vectors. Version is represented as `"1.0"`; schema rejects unsupported major versions while allowing compatible v1 minor increments. GPIO argument schema does not replace board-profile pin enforcement.
+Baseline: repository had no test suite before T-102; no baseline tests were available.
+Verified: ran the validator logic against the committed protocol schema, operation catalogue and vectors in an isolated local mirror. Output: `PASS: 23 valid vectors accepted; 12 invalid vectors rejected; 5 operation schemas loaded.` Exit code: 0. Host test dependency `jsonschema` was present. The test caught and led to a fix rejecting unsupported major version `2.0`.
+Memory: no firmware changed; image size and heap not measured.
+Next: T-103 Board profile and pin validator is next by backlog order; T-104 Firmware core skeleton is also eligible but T-103 precedes it. T-105 depends on both T-102 and T-104.
