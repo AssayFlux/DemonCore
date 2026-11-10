@@ -81,3 +81,13 @@ Done when: Flutter project builds; NodeLink and WebSocket adapter exist; fleet l
 Files: `app/` only.
 Blocker: neither `flutter` nor `dart` is installed in the execution environment. Creating a project without the actual SDK would require guessing the SDK constraints/package metadata, and the required analyze/test verification could not run. No app files were changed.
 Next: owner must provide a Flutter/Dart-capable runner or enable the SDK in the build environment. Gate 1 remains blocked.
+
+
+### T-104 Firmware core skeleton — CI verification work (2026-11-10) status: doing
+Goal: add a reproducible MicroPython unix-port test job so the existing firmware core is verified by the actual target Python runtime in CI.
+Done when: the pinned unix port builds in CI; all six core tests pass under that runtime; the exact Verify output is recorded; task status is updated.
+Files: `firmware/core/`, `firmware/tests/`, and `.github/workflows/ci.yml` (CI verification only; owner authorised changes needed to complete the project).
+Changed: adding a CI job that builds the official MicroPython v1.29.0 unix port from its tagged source and runs `firmware/tests/test_core.py`; no firmware logic or hardware assumptions changed.
+Verified: pending GitHub Actions run.
+Memory: no ESP32 image built; device heap and flash budgets remain unmeasured.
+Next: inspect the unix-port CI result; fix only T-104 failures, then continue to the next eligible backlog task.
