@@ -36,3 +36,43 @@ jobs:
       - name: Run firmware core tests on MicroPython
         run: |
           MICROPYPATH=.frozen:firmware "$RUNNER_TEMP/micropython/ports/unix/build-standard/micropython" firmware/tests/test_core.py
+
+  firmware-esp32:
+    name: Build DemonCore ESP32 merged firmware
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out DemonCore
+        uses: actions/checkout@v4
+      - name: Install ESP-IDF system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0
+      - name: Fetch pinned MicroPython source
+        run: |
+          git clone --depth 1 --branch v1.29.0 https://github.com/micropython/micropython.git "$RUNNER_TEMP/micropython"
+          test "$(git -C "$RUNNER_TEMP/micropython" rev-parse HEAD)" = "0fd6c573ea815774668bbb16b8e197c8822368b2"
+      - name: Fetch and install pinned ESP-IDF
+        run: |
+          git clone --depth 1 --branch v5.5.2 --recursive --shallow-submodules https://github.com/espressif/esp-idf.git "$RUNNER_TEMP/esp-idf"
+          test "$(git -C "$RUNNER_TEMP/esp-idf" rev-parse HEAD)" = "30aaf64524299d3bde422ca9a2848090d1bc5d0f"
+          cd "$RUNNER_TEMP/esp-idf"
+          ./install.sh esp32
+      - name: Build merged firmware and memory report
+        shell: bash
+        run: |
+          source "$RUNNER_TEMP/esp-idf/export.sh"
+          export MPYTHON_DIR="$RUNNER_TEMP/micropython"
+          export IDF_PATH="$RUNNER_TEMP/esp-idf"
+          firmware/build/build.sh
+      - name: Upload merged firmware and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Demoncore-ESP32-Master-Firmware
+          path: |
+            firmware/build/Demoncore ESP32 Master Firmware.bin
+            firmware/build/report.md
+            firmware/build/firmware.sha256
+            firmware/build/partitions.csv
+          if-no-files-found: warn
+          retention-days: 30
