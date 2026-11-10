@@ -9,12 +9,13 @@ A partitions, and emits `Demoncore ESP32 Master Firmware.bin` at flash offset
 The upstream ESP32 board configuration defaults to performance optimization
 (`-O2`). The build selects size optimization (`-Os`) and disables optional
 features outside the current DemonCore board contract: SPI Ethernet PHY
-drivers (W5500, KSZ8851SNL and DM9051), the ULP coprocessor, and runtime
-INFO-level ESP logging. Wi-Fi, BLE, TLS, MicroPython networking and the frozen
+drivers (W5500, KSZ8851SNL and DM9051), and runtime INFO-level ESP
+logging. The ULP coprocessor remains enabled because the pinned MicroPython
+ESP32 port compiles its ULP support source unconditionally. Wi-Fi, BLE, TLS, MicroPython networking and the frozen
 DemonCore core remain enabled. The build fails closed if the pinned upstream
 configuration changes, and the report verifies the generated sdkconfig.
 Disabling these optional facilities means this image does not provide SPI
-Ethernet or ULP support; they are not part of the current hardware plan.
+Ethernet; it is not part of the current hardware plan.
 
 The report checks the exact Profile A layout and at least 10% OTA-slot spare,
 and records source/image hashes. Generated binaries and intermediate build

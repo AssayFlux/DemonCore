@@ -15,7 +15,6 @@ EXPECTED = {
 }
 OPTIONAL_DISABLED = (
     "CONFIG_LOG_MAXIMUM_LEVEL_INFO",
-    "CONFIG_ULP_COPROC_ENABLED",
     "CONFIG_ETH_USE_SPI_ETHERNET",
     "CONFIG_ETH_SPI_ETHERNET_W5500",
     "CONFIG_ETH_SPI_ETHERNET_KSZ8851SNL",
@@ -93,7 +92,7 @@ def main():
         "- MicroPython source archive SHA-256: `" + args.source_sha256 + "`",
         "- ESP-IDF: v5.5.2, commit `" + args.idf_commit + "`",
         "- Compiler optimization: ESP-IDF size mode (`-Os`), verified from generated sdkconfig",
-        "- Optional features disabled: SPI Ethernet PHYs (W5500/KSZ8851SNL/DM9051), ULP coprocessor, runtime INFO-level ESP logging",
+        "- Optional features disabled: SPI Ethernet PHYs (W5500/KSZ8851SNL/DM9051), runtime INFO-level ESP logging",
         "- Frozen manifest: `firmware/manifest.py` (core package, boot.py, main.py, asyncio)",
         "- Merged image: `" + merged.name + "`",
         "- Merged image flash offset: `0x1000`",

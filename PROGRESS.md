@@ -202,3 +202,16 @@ Changed: CI run 42771051878 built successfully with `-Os`, but the application r
 Verified: run 42771051878 — lint PASS; MicroPython unix-port build PASS; all 9 firmware core tests PASS; ESP32 compilation PASS; Profile A layout PASS; OTA 10% FAIL (9.54%). Artifact SHA-256 from report: `b1730de54bd68af5e54432633d73589ecb1dbb41ffcdf798f45f7ad91fef92ca`; this image is not an accepted release. No physical hardware tests were performed.
 
 Next: run CI on the feature-trimmed configuration; verify the image size, OTA margin, hash and merged image. Hardware boot, free heap, GC headroom and runtime filesystem space remain [HUMAN].
+
+
+### T-107 OTA trim correction — retain mandatory ULP headers (2026-11-10) status: doing
+Goal: remove only optional ESP-IDF features that can be disabled without breaking the pinned MicroPython ESP32 port.
+Done when: the pinned build compiles, Profile A is unchanged, at least 10% OTA-slot headroom is measured, unix-port tests pass, and image/source hashes are recorded.
+Files: `firmware/build/build.sh`, `firmware/build/report.py`, `firmware/build/README.md`, `PROGRESS.md`.
+
+Changed: run 42771740065 confirmed that disabling `CONFIG_ULP_COPROC_ENABLED` is not safe for this pinned MicroPython source: `ports/esp32/esp32_ulp.c` is compiled unconditionally and requires the ESP-IDF `esp32/ulp.h` header. Reverted only that ULP exclusion and removed it from the report's disabled-feature assertions. SPI Ethernet PHY drivers and runtime INFO-level ESP logging remain excluded; Wi-Fi, BLE, TLS and ULP support remain enabled. Profile A partition geometry is untouched.
+
+Verified: run 42771740065 — lint PASS; MicroPython unix-port build and all 9 tests PASS; ESP32 compile FAIL at `esp32_ulp.c:32` with missing `esp32/ulp.h`, caused by the unsupported ULP Kconfig exclusion. No firmware artifact was produced. The next CI run must confirm that retaining ULP restores compilation and whether the remaining supported trims meet the OTA threshold.
+
+Memory: no physical ESP32 boot; free heap, GC headroom and runtime filesystem space remain [HUMAN].
+Next: rerun pinned CI, inspect the measured OTA report, then iterate only on source-verified optional features if the 10% threshold still fails.
