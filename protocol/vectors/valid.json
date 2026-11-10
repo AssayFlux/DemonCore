@@ -14,7 +14,7 @@
   {
     "name": "sys-info-res",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000002",
       "dst": "node:100",
@@ -33,7 +33,7 @@
   {
     "name": "ping-empty",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000003",
       "dst": "node:100",
@@ -45,7 +45,7 @@
   {
     "name": "ping-token",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000004",
       "dst": "node:100",
@@ -59,7 +59,7 @@
   {
     "name": "ping-res",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000005",
       "dst": "node:100",
@@ -74,7 +74,7 @@
   {
     "name": "mode-input",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000006",
       "dst": "node:100",
@@ -89,7 +89,7 @@
   {
     "name": "mode-pullup",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000007",
       "dst": "node:100",
@@ -104,7 +104,7 @@
   {
     "name": "mode-pulldown",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000008",
       "dst": "node:100",
@@ -119,7 +119,7 @@
   {
     "name": "mode-output",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000009",
       "dst": "node:100",
@@ -134,7 +134,7 @@
   {
     "name": "mode-warning-confirm",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "000000000000000a",
       "dst": "node:100",
@@ -150,7 +150,7 @@
   {
     "name": "mode-res",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "000000000000000b",
       "dst": "node:100",
@@ -165,7 +165,7 @@
   {
     "name": "read",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "000000000000000c",
       "dst": "node:100",
@@ -179,7 +179,7 @@
   {
     "name": "read-low",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "000000000000000d",
       "dst": "node:100",
@@ -194,7 +194,7 @@
   {
     "name": "read-high",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "000000000000000e",
       "dst": "node:100",
@@ -209,7 +209,7 @@
   {
     "name": "write-low",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "000000000000000f",
       "dst": "node:100",
@@ -224,7 +224,7 @@
   {
     "name": "write-high",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000010",
       "dst": "node:100",
@@ -239,7 +239,7 @@
   {
     "name": "write-confirm",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000011",
       "dst": "node:100",
@@ -255,7 +255,7 @@
   {
     "name": "write-res",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000012",
       "dst": "node:100",
@@ -270,7 +270,7 @@
   {
     "name": "event",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000013",
       "dst": "group:lab",
@@ -284,7 +284,7 @@
   {
     "name": "tag-selector",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000014",
       "dst": "tag:production",
@@ -296,7 +296,7 @@
   {
     "name": "cell-selector",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000015",
       "dst": "cell:west-1",
@@ -308,7 +308,7 @@
   {
     "name": "wildcard",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000016",
       "dst": "*",
@@ -320,7 +320,7 @@
   {
     "name": "group-selector",
     "message": {
-      "v": 1,
+      "v": "1.0",
       "src": "node:100",
       "id": "0000000000000017",
       "dst": "group:lab_1",

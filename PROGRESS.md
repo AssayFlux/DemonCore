@@ -119,3 +119,12 @@ Changed: added CI that builds the official MicroPython v1.29.0 unix port and run
 Verified: GitHub Actions run 42764956525, commit `7af3475de10f039b3fe0b364424109fab79d8f22`: lint job PASS; pinned MicroPython unix build PASS; tests PASS — `PASS test_config_defaults`, `PASS test_config_overrides`, `PASS test_log_ring`, `PASS test_crash_counter_and_safe_mode`, `PASS test_corrupt_state_fails_safe`, `PASS test_watchdog_feed_is_in_scheduler_loop`, `PASS: 6 firmware core tests`. Exit code 0.
 Memory: ESP32 image size and physical-device free heap not yet measured; those are part of T-107 build report and hardware validation. Unix executable size is not an ESP32 firmware measurement.
 Next: T-105 DCP codec in firmware is now eligible (depends on T-102 and T-104). T-103 remains blocked until owner confirms physical board header labels.
+
+### T-102 protocol-vector consistency correction (2026-11-10) status: done
+Goal: align every valid DCP vector's version field with the normative v1.0 string contract before firmware codec conformance testing.
+Done when: all valid vectors use the exact string `"1.0"`; invalid vectors remain unchanged; the correction is committed and the protocol validator is rerun by the codec CI verification.
+Files: `protocol/vectors/valid.json`, `PROGRESS.md`.
+Changed: replaced numeric `v: 1` values in valid vectors with the specified string `v: "1.0"`. Invalid vectors were not modified.
+Verified: parsed the edited JSON and confirmed all valid vectors use `"1.0"`; 23 valid vectors retained. Full schema/operation validation will be exercised by the T-105 CI vector job.
+Memory: no firmware changes.
+Next: T-105 DCP codec in firmware.
