@@ -118,6 +118,24 @@ class Simulator:
             return False, "E_INVALID_ARG", errors[0].message
         return True, None, None
 
+    def validate_vector(self, message):
+        errors = list(self.envelope_validator.iter_errors(message))
+        if errors:
+            return False, errors[0].message
+        operation = self.operations.get(message["op"])
+        if operation is None:
+            return False, "unknown operation"
+        if message["t"] == "req":
+            contract = operation["request"]
+        elif message["t"] == "res" and "error" not in message["args"]:
+            contract = operation["response"]
+        elif message["t"] in ("res", "evt"):
+            return True, None
+        else:
+            return False, "unsupported message type"
+        errors = list(Draft202012Validator(contract).iter_errors(message["args"]))
+        return (False, errors[0].message) if errors else (True, None)
+
     def resolve(self, destination):
         if destination == "*":
             return list(self.nodes.values())

@@ -15,7 +15,7 @@ class SimulatorTests(unittest.TestCase):
         valid = json.loads((ROOT / "protocol" / "vectors" / "valid.json").read_text())
         invalid = json.loads((ROOT / "protocol" / "vectors" / "invalid.json").read_text())
         for vector in valid:
-            ok, _, _ = sim.validate(vector["message"])
+            ok, _, _ = sim.validate_vector(vector["message"])
             self.assertTrue(ok, vector["name"])
         for vector in invalid:
             ok, _, _ = sim.validate(vector["message"])
