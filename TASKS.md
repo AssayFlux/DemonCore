@@ -33,7 +33,7 @@ Goal: repository, protocol, pin safety, firmware core, identity, build/flash pip
 - Verify: unix-port unit tests in CI.
 
 ### T-105 DCP codec in firmware
-- Status: doing | Size: M | Depends: T-102, T-104
+- Status: done | Size: M | Depends: T-102, T-104
 - Touch: `firmware/core/dcp.py`, `firmware/tests/`
 - Done when: encode/decode/routing/error replies work; all protocol vectors pass; RAM measurement script reports codec cost.
 - Verify: CI vector tests; record RAM in PROGRESS.md.

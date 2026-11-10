@@ -133,3 +133,12 @@ Next: T-105 DCP codec in firmware.
 Goal: implement the MicroPython-compatible DCP v1 encoder, strict decoder, destination matching and standard error replies.
 Done when: encode/decode/routing/error replies work; all shared valid and invalid vectors pass; RAM measurement script reports codec heap cost; exact MicroPython unix-port CI output and RAM result are recorded.
 Files: `firmware/core/dcp.py`, `firmware/tests/test_core.py`, `firmware/tests/measure_dcp_ram.py`; `TASKS.md` and `PROGRESS.md` for task status.
+
+### T-105 DCP codec in firmware (2026-11-10) status: done
+Goal: implement the MicroPython-compatible DCP v1 encoder, strict decoder, destination matching and standard error replies.
+Done when: encode/decode/routing/error replies work; all shared valid and invalid vectors pass; RAM measurement script reports codec heap cost; exact MicroPython unix-port CI output and RAM result are recorded.
+Files: `firmware/core/dcp.py`, `firmware/tests/test_core.py`, `firmware/tests/measure_dcp_ram.py`; `TASKS.md` and `PROGRESS.md` for task status.
+Changed: added bounded UTF-8 encode/decode (4,096-byte cap), duplicate-key and malformed JSON rejection, args nesting/member limits, finite-number checks, v1 envelope and operation validation, selector routing, and DCP error replies. Added shared-vector tests and a standalone gc.mem_free measurement script.
+Verified: GitHub Actions run 42766278144 on commit `8c4bee3a6f46014ed3bf59502eb96a6b0b15c058` passed lint, built the pinned MicroPython v1.29.0 unix port, and passed all 9 core tests: `PASS test_config_defaults`, `PASS test_config_overrides`, `PASS test_log_ring`, `PASS test_crash_counter_and_safe_mode`, `PASS test_corrupt_state_fails_safe`, `PASS test_watchdog_feed_is_in_scheduler_loop`, `PASS test_dcp_shared_vectors`, `PASS test_dcp_strict_json_and_limits`, `PASS test_dcp_routing_and_error_reply`, `PASS: 9 firmware core tests`. Shared vectors: 23 valid accepted/round-tripped and 12 invalid rejected. Unix-port heap measurement: DCP module import `14,368 bytes`; sample round-trip retained `352 bytes`. These are unix-port measurements, not ESP32 heap measurements.
+Memory: ESP32 target heap and flash costs remain unmeasured until T-107 ESP32 build and hardware boot; do not treat unix-port heap as ESP32 RAM.
+Next: T-107 Build pipeline and memory report is now the first eligible firmware build task (T-106 depends on blocked T-103 physical pin-map confirmation). T-103 still requires owner photo/silkscreen verification.
