@@ -21,7 +21,7 @@ Goal: repository, protocol, pin safety, firmware core, identity, build/flash pip
 - Verify: tool validates every vector against schema and fails on mismatch.
 
 ### T-103 Board profile and pin validator
-- Status: doing | Size: S | Depends: T-101
+- Status: blocked | Size: S | Depends: T-101
 - Touch: `firmware/boards/`, `tools/`
 - Done when: `esp32-wroom-38pin.json` encodes blocked, strapping, console, input-only, ADC1, ADC2, DAC and general classes; validator returns allow/warn/block with reason for mode/write/pwm/adc; tests cover each class.
 - Verify: unit tests; [HUMAN] owner checks pin labels against real board photo/silkscreen and records differences.
