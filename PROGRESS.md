@@ -147,3 +147,14 @@ Next: T-107 Build pipeline and memory report is now the first eligible firmware 
 Goal: create a reproducible ESP32_GENERIC build of MicroPython with the DemonCore core frozen into the image and Profile A flash partitions.
 Done when: MicroPython source/version/SHA256 and ESP-IDF are pinned; the core is frozen; Profile A partition table is validated; build emits the single merged `Demoncore ESP32 Master Firmware.bin`; report records image size, 10% OTA-slot headroom and post-boot free heap; exact build verification is logged.
 Files: `firmware/vendor/`, `firmware/manifest.py`, `firmware/partitions.csv`, `firmware/build/`, `.github/workflows/ci.yml`; `TASKS.md` and `PROGRESS.md` for status.
+
+
+### T-107 ESP32 build pipeline — frozen-module manifest correction (2026-11-10) status: doing
+Goal: produce the pinned ESP32_GENERIC OTA firmware image with DemonCore core frozen into MicroPython.
+Done when: pinned source/version/hash are recorded; core manifest freezes required modules once; Profile A partitions build; the build emits a real merged image and report with OTA headroom; post-boot heap remains explicitly hardware-pending until measured.
+Files: `firmware/vendor/`, `firmware/manifest.py`, `firmware/partitions.csv`, `firmware/build/`, CI.
+Changed: removed the explicit `module()` declarations for `boot.py` and `main.py` because `freeze("core")` already freezes both files. The duplicate declarations generated duplicate C symbols (`frozen_module_boot` and `frozen_module_main`) and stopped the ESP32 compile.
+Verified: previous run #52 (commit `26ff3c2d4bd24da08e91df9e10a72121322d3a09`) — lint PASS; MicroPython unix-port core tests PASS; ESP32 build FAIL at C compilation with redefinition errors for frozen boot/main modules. No artifact was produced. Official MicroPython ESP32 build documentation confirms `firmware.bin` is the combined bootloader, partition table and application image, suitable as the single-image output when the build succeeds.
+Blocker: corrected manifest is committed next; rebuild and inspect report/artifact before marking done. Physical-board boot and runtime heap/GC measurements remain [HUMAN].
+Memory: no verified ESP32 image yet; image size and post-boot heap remain unmeasured.
+Next: rerun CI on main, validate merged image size/OTA headroom and SHA-256, then provide the binary only after artifact verification.
