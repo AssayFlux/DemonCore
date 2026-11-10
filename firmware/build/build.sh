@@ -18,14 +18,37 @@ BUILD_DIR="$MPYTHON_DIR/ports/esp32/build-ESP32_GENERIC-OTA"
 SDKCONFIG_BASE="$MPYTHON_DIR/ports/esp32/boards/sdkconfig.base"
 mkdir -p "$OUT_DIR"
 
-# The upstream ESP32 profile selects -O2 for speed. DemonCore's fixed Profile A
-# OTA slots require a smaller image, so deterministically select ESP-IDF -Os.
-# Fail closed if the pinned upstream configuration changes unexpectedly.
+# Preserve Wi-Fi, BLE and TLS. Disable optional ESP-IDF facilities that are
+# outside the DemonCore board contract: SPI Ethernet PHYs, ULP and runtime
+# INFO-level ESP logging. Keep this deterministic against the pinned source.
 if [[ "$(grep -c '^CONFIG_COMPILER_OPTIMIZATION_PERF=y$' "$SDKCONFIG_BASE")" != "1" ]]; then
     echo "Expected exactly one upstream performance-optimization setting in $SDKCONFIG_BASE" >&2
     exit 2
 fi
-sed -i 's/^CONFIG_COMPILER_OPTIMIZATION_PERF=y$/CONFIG_COMPILER_OPTIMIZATION_SIZE=y/' "$SDKCONFIG_BASE"
+OPTIONAL_SETTINGS=(
+    CONFIG_LOG_MAXIMUM_LEVEL_INFO
+    CONFIG_ULP_COPROC_ENABLED
+    CONFIG_ETH_USE_SPI_ETHERNET
+    CONFIG_ETH_SPI_ETHERNET_W5500
+    CONFIG_ETH_SPI_ETHERNET_KSZ8851SNL
+    CONFIG_ETH_SPI_ETHERNET_DM9051
+)
+for setting in "${OPTIONAL_SETTINGS[@]}"; do
+    if [[ "$(grep -c "^${setting}=y$" "$SDKCONFIG_BASE")" != "1" ]]; then
+        echo "Expected exactly one upstream ${setting}=y setting in $SDKCONFIG_BASE" >&2
+        exit 2
+    fi
+done
+sed -i \
+    -e 's/^CONFIG_COMPILER_OPTIMIZATION_PERF=y$/CONFIG_COMPILER_OPTIMIZATION_SIZE=y/' \
+    -e '/^CONFIG_LOG_MAXIMUM_LEVEL_INFO=y$/d' \
+    -e '/^CONFIG_ULP_COPROC_ENABLED=y$/d' \
+    -e '/^CONFIG_ETH_USE_SPI_ETHERNET=y$/d' \
+    -e '/^CONFIG_ETH_SPI_ETHERNET_W5500=y$/d' \
+    -e '/^CONFIG_ETH_SPI_ETHERNET_KSZ8851SNL=y$/d' \
+    -e '/^CONFIG_ETH_SPI_ETHERNET_DM9051=y$/d' \
+    "$SDKCONFIG_BASE"
+
 rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"
 

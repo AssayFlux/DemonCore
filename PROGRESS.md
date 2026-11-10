@@ -191,3 +191,14 @@ Changed: CI run 42770796267 passed lint and all 9 MicroPython unix-port tests, b
 Verified: shell syntax check PASS. The previous ESP32 run produced no artifact; no OTA size result yet. Real-board boot and runtime resource checks remain [HUMAN].
 
 Next: rerun CI; inspect the ESP32 build report and merged image before distributing any firmware.
+
+### T-107 OTA image-size follow-up — optional ESP-IDF feature trimming (2026-11-10) status: doing
+Goal: reduce the application image below the strict 90%-of-slot limit while preserving Profile A, Wi-Fi, BLE, TLS and the frozen DemonCore core.
+Done when: the build deterministically uses `-Os`, disables only optional features outside the current board plan, verifies those settings from generated sdkconfig, and produces at least 10% OTA headroom; lint and all MicroPython core tests pass.
+Files: `firmware/build/build.sh`, `firmware/build/report.py`, `firmware/build/README.md`, `TASKS.md`, `PROGRESS.md`.
+
+Changed: CI run 42771051878 built successfully with `-Os`, but the application remained exactly 1,482,080 bytes and OTA spare remained 156,320 bytes (9.54%). Therefore compiler size mode alone does not meet the contract. The next bounded optimization disables optional SPI Ethernet PHY drivers (W5500/KSZ8851SNL/DM9051), ULP coprocessor and runtime INFO-level ESP logging. Wi-Fi, BLE, TLS and DCP remain enabled. The report will fail if any excluded feature is still enabled or if OTA spare is below 10%.
+
+Verified: run 42771051878 — lint PASS; MicroPython unix-port build PASS; all 9 firmware core tests PASS; ESP32 compilation PASS; Profile A layout PASS; OTA 10% FAIL (9.54%). Artifact SHA-256 from report: `b1730de54bd68af5e54432633d73589ecb1dbb41ffcdf798f45f7ad91fef92ca`; this image is not an accepted release. No physical hardware tests were performed.
+
+Next: run CI on the feature-trimmed configuration; verify the image size, OTA margin, hash and merged image. Hardware boot, free heap, GC headroom and runtime filesystem space remain [HUMAN].

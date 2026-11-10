@@ -13,6 +13,15 @@ EXPECTED = {
     "ota_1": (0x1A0000, 0x190000, "app", "ota_1"),
     "vfs": (0x330000, 0xD0000, "data", "fat"),
 }
+OPTIONAL_DISABLED = (
+    "CONFIG_LOG_MAXIMUM_LEVEL_INFO",
+    "CONFIG_ULP_COPROC_ENABLED",
+    "CONFIG_ETH_USE_SPI_ETHERNET",
+    "CONFIG_ETH_SPI_ETHERNET_W5500",
+    "CONFIG_ETH_SPI_ETHERNET_KSZ8851SNL",
+    "CONFIG_ETH_SPI_ETHERNET_DM9051",
+)
+
 
 def sha256(path):
     digest = hashlib.sha256()
@@ -20,6 +29,7 @@ def sha256(path):
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
 
 def parse_partitions(path):
     partitions = {}
@@ -30,6 +40,7 @@ def parse_partitions(path):
             name, kind, subtype, offset, size = [item.strip() for item in row[:5]]
             partitions[name] = (int(offset, 0), int(size, 0), kind, subtype)
     return partitions
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -65,12 +76,15 @@ def main():
     merged_size = merged.stat().st_size
     sdkconfig = build_dir / "sdkconfig"
     if not sdkconfig.is_file():
-        raise SystemExit("Missing ESP-IDF sdkconfig; cannot verify size optimization")
+        raise SystemExit("Missing ESP-IDF sdkconfig; cannot verify build configuration")
     sdkconfig_text = sdkconfig.read_text(encoding="utf-8")
     if "CONFIG_COMPILER_OPTIMIZATION_SIZE=y" not in sdkconfig_text:
         raise SystemExit("ESP-IDF build is not using size optimization (-Os)")
     if "CONFIG_COMPILER_OPTIMIZATION_PERF=y" in sdkconfig_text:
         raise SystemExit("ESP-IDF performance optimization (-O2) is still enabled")
+    enabled_optional = [name for name in OPTIONAL_DISABLED if name + "=y" in sdkconfig_text]
+    if enabled_optional:
+        raise SystemExit("Optional ESP-IDF features unexpectedly enabled: " + ", ".join(enabled_optional))
 
     lines = [
         "# DemonCore ESP32 build report", "",
@@ -79,6 +93,7 @@ def main():
         "- MicroPython source archive SHA-256: `" + args.source_sha256 + "`",
         "- ESP-IDF: v5.5.2, commit `" + args.idf_commit + "`",
         "- Compiler optimization: ESP-IDF size mode (`-Os`), verified from generated sdkconfig",
+        "- Optional features disabled: SPI Ethernet PHYs (W5500/KSZ8851SNL/DM9051), ULP coprocessor, runtime INFO-level ESP logging",
         "- Frozen manifest: `firmware/manifest.py` (core package, boot.py, main.py, asyncio)",
         "- Merged image: `" + merged.name + "`",
         "- Merged image flash offset: `0x1000`",
@@ -98,7 +113,9 @@ def main():
     ]
     for name, values in actual.items():
         lines.append("| %s | 0x%06x | %d |" % (name, values[0], values[1]))
-    Path(args.output).write_text("\n".join(lines) + "\n", encoding="utf-8")
+    Path(args.output).write_text("
+".join(lines) + "
+", encoding="utf-8")
     print("APP_IMAGE_BYTES", app_size)
     print("OTA_SLOT_BYTES", slot_size)
     print("OTA_HEADROOM_BYTES", headroom)
@@ -107,9 +124,12 @@ def main():
     print("MERGED_IMAGE_SHA256", sha256(merged))
     print("MICROPYTHON_SOURCE_ARCHIVE_SHA256", args.source_sha256)
     print("PROFILE_A_LAYOUT", "PASS")
+    print("SIZE_OPTIMIZATION", "PASS")
+    print("OPTIONAL_FEATURES_DISABLED", "PASS")
     print("OTA_SPARE_10_PERCENT", "PASS" if passes else "FAIL")
     if not passes:
         raise SystemExit("Firmware does not fit the OTA slot with 10% spare")
+
 
 if __name__ == "__main__":
     main()
