@@ -169,3 +169,14 @@ Changed: owner authorized solving the OTA shortfall. The previous application wa
 Verified: pending CI build and artifact inspection. The prior run 42768800978 passed lint and all 9 MicroPython unix-port core tests, but the ESP32 build failed only the strict OTA headroom check. Real-board boot, execution-speed impact, free heap, GC headroom and filesystem usage require the owner's ESP-WROOM-32 hardware and remain [HUMAN].
 
 Next: inspect the size-optimized build report and SHA-256; if OTA headroom is at least 10%, provide the verified image while retaining the physical hardware checks as outstanding.
+
+### T-107 build pipeline — restore executable build-script mode (2026-11-10) status: doing
+Goal: rerun the pinned ESP32 build after the OTA-size optimization change.
+Done when: the build script executes in CI, the image meets the strict 10% OTA-slot headroom requirement, and the artifact is hash-verified.
+Files: `firmware/build/build.sh` file mode; `PROGRESS.md`.
+
+Changed: the first run after the optimization commit passed lint and all 9 MicroPython unix-port core tests, but the ESP32 job stopped before invoking the build because the Git tree recorded `firmware/build/build.sh` as non-executable. Restore its executable bit (100755); no firmware source or partition change.
+
+Verified: CI run 42770564358 — lint PASS; MicroPython unix-port build and all 9 tests PASS; ESP32 build did not start (exit 126, permission denied). No new firmware artifact was produced.
+
+Next: rerun CI and inspect the actual size-optimized ESP32 build, OTA headroom, merged image and checksum. Physical hardware checks remain [HUMAN].
