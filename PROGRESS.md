@@ -379,3 +379,10 @@ Done when: CI creates a valid CSV with printf, passes valid line continuations, 
 Files: `tools/README.md`, `.github/workflows/ci.yml`, `PROGRESS.md`.
 
 Changed: corrected the README derivation description and reduced over-escaped backslashes in the CI shell block. The previous CI run 42809140523 confirmed lint PASS and the host-tools suite PASS (18 tests) after the label-test import correction; its run predates this cell-scope/integration revision. The new real-generator CI run is pending.
+
+### T-112 provisioning regression corrections (2026-11-10) status: doing
+Goal: correct the host-test fixtures for the new cell-scoped key input and prevent accidentally flashing multiple physical boards through one unchanged serial connection.
+Done when: CSV test fixtures contain real newlines; NVS image fixture includes a cell; CLI rejects multi-row flash requests; host tests and real NVS-generator CI pass.
+Files: `tools/provision.py`, `tools/tests/test_provision.py`, `tools/README.md`, `PROGRESS.md`.
+
+Changed: corrected escaped newline literals in two CSV test fixtures and supplied the required cell metadata to the NVS-image test. The flash option now refuses multi-row input so a single connected board cannot be silently re-flashed for every CSV row. README now documents that cell keys are shared by nodes in the same cell. Prior run 42809276400 caught these two fixture issues; lint passed.

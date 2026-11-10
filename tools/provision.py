@@ -221,6 +221,8 @@ def main(argv=None):
             generator = str(Path(idf) / "components/nvs_flash/nvs_partition_generator/nvs_partition_gen.py")
     if not generator or not Path(generator).is_file():
         parser.error("provide --nvs-generator or set IDF_PATH to the pinned ESP-IDF checkout")
+    if args.port and len(nodes) != 1:
+        parser.error("flash one physical board at a time using a one-row CSV")
     if args.port and not all((args.bootloader, args.partition_table, args.phy_init, args.app_image)):
         parser.error("--port requires --bootloader, --partition-table, --phy-init and --app-image")
 

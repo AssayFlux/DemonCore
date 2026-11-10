@@ -80,7 +80,7 @@ class ProvisioningTests(unittest.TestCase):
             )
             output = root / "out"
             output.mkdir(mode=0o700)
-            image = generate_nvs_image({"node_id": 17}, b"k" * 32, generator, output)
+            image = generate_nvs_image({"node_id": 17, "cell": "lab"}, b"k" * 32, generator, output)
             self.assertEqual(image.stat().st_size, 0x4000)
             self.assertEqual(image.stat().st_mode & 0o777, 0o600)
             self.assertFalse(list(output.glob(".demoncore-nvs-*.csv")))
