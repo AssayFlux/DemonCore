@@ -68,3 +68,8 @@ Apache-2.0. Preserve the existing [LICENSE](LICENSE). Do not add third-party mod
 ## Modular workspace architecture
 
 DemonCore is being organised as a **modular monorepo**: firmware, app, hub and host tools are separate workspaces in this repository, while `protocol/` remains the shared DCP contract and root docs/licence/CI remain repository-wide. The approved path map and staged migration gates are in [docs/REPO_ARCHITECTURE.md](docs/REPO_ARCHITECTURE.md). Existing source paths will move only through verified migration tasks; the architecture document does not claim the workspaces are already independently buildable.
+
+
+## Pocket Host interoperability
+
+Pocket Host is a separate cross-platform website/service hosting ecosystem. DemonCore remains the specialised MCU and edge-device fleet layer. Their planned integration boundary, DCP security prerequisites and sequencing are documented in [docs/POCKETHOST_INTEROP.md](docs/POCKETHOST_INTEROP.md). This is an architecture proposal only: no Pocket Host adapter, Flutter app or fleet hub is claimed implemented by that document.
