@@ -8,3 +8,6 @@ Start with the [North Star](../NORTH_STAR.md) for the product destination, then 
 - [Agent working rules](../AGENTS.md) — mandatory workflow and safety constraints.
 
 Setup, pin, security, plugin and release guides belong here as implementation tasks are completed.
+
+
+- [Pocket Host interoperability](POCKETHOST_INTEROP.md) — proposed integration boundary, DCP prerequisites and cross-project sequencing.
