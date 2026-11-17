@@ -1,84 +1,91 @@
-# Pocket Host interoperability boundary
+# Pocket Host 0.1.0 — DemonCore Edge Integration
 
-**Status:** proposed integration contract; no Pocket Host bridge is implemented by this document.  
-**Related project:** [AssayFlux/PocketHost](https://github.com/AssayFlux/PocketHost).  
-**DemonCore authority:** `NORTH_STAR.md`, `docs/PLAN.md`, `TASKS.md`, `AGENTS.md` and the DCP specifications remain authoritative for DemonCore implementation.
+**Product relationship:** interoperable, independently operated systems  
+**Mobile owner interface:** Pocket Host Android and iOS command-center applications  
+**DemonCore role:** microcontroller firmware, board safety and constrained device fleet
 
-## 1. Purpose
+## 1. Responsibility boundary
 
-Pocket Host is evolving into a cross-platform website/service hosting and device-management ecosystem. DemonCore is a specialised microcontroller and edge-device fleet project. They should interoperate without merging repositories, duplicating firmware internals or making either product mandatory for the other.
+Pocket Host manages the user's fleet from a mobile phone and operates general-purpose host nodes, websites, application components, runtimes, ingress and backups.
 
-## 2. Responsibility boundary
+DemonCore manages MCU firmware, board profiles, safe GPIO/peripheral operations, device identity/provisioning, DCP messaging, embedded transports and MCU fleet lifecycle.
 
-**Pocket Host owns**
-- General-purpose host nodes: Android, Linux, Windows, macOS, VPS/server and capable SBC.
-- Website ingress, static hosting, supported language runtimes and multi-component service deployments.
-- Host-node registration, service placement, operator UX and public website connectivity.
-- The policy decision about which edge capabilities a website/service may consume.
+The repositories remain independently buildable and deployable. Neither project is required for the other to operate its own supported workloads.
 
-**DemonCore owns**
-- MCU firmware, board profiles, pin/peripheral safety and MicroPython resource budgets.
-- DCP device protocol, device identity/claim, provisioning and MCU-specific authentication.
-- BLE/Wi-Fi/ESP-NOW/MQTT device transports, mesh/fleet operations and firmware OTA.
-- The allow-listed set of device capabilities exposed by each board profile.
-
-An ESP32 is not presumed to be a general-purpose Pocket Host host. It may provide telemetry, sensor/actuator operations, a bounded local API, MQTT/DCP endpoint or protocol bridge only when the exact board/firmware profile passes its own resource, security and hardware acceptance.
-
-## 3. Target topology
+## 2. Interconnected topology
 
 ```
-Pocket Host operator / optional control plane
-                   |
-       Pocket Host edge-fleet adapter
-                   |
-       DemonCore hub / authenticated DCP gateway
-                   |
+Pocket Host Android / iOS command center
+                  |
+        authenticated fleet API
+                  |
+        Pocket Host host agents
+                  |
+       Pocket Host edge gateway
+                  |
+       authenticated DCP adapter
+                  |
+        DemonCore hub / gateway
+                  |
        MQTT / BLE / Wi-Fi / ESP-NOW
-                   |
-          Claimed MCU / edge nodes
+                  |
+        claimed MCU and sensor nodes
 ```
 
-The DemonCore hub is a future integration point, not an implemented dependency. A Raspberry Pi or other capable Linux SBC may eventually host both a Pocket Host Linux node and the DemonCore hub if each workspace becomes independently deployable and passes its own security and resource tests.
+The mobile command center may pair, inspect, approve, configure and revoke edge devices through Pocket Host's edge gateway. It does not connect to unauthenticated MCU administration endpoints or send arbitrary DCP/GPIO commands.
 
-## 4. Protocol and security prerequisites
+A capable Linux SBC may run the Pocket Host host agent and DemonCore gateway as separate supervised components. They use separate service identities, storage, resource limits, credentials, health checks and update paths.
 
-- DCP v1.0's envelope is not authentication. The normative `protocol/dcp.md` explicitly states this.
-- The current DCP message and reassembly limit is 4,096 bytes. Gateways must enforce the limit and never partially execute an oversized message.
-- Only operations explicitly present in the versioned operation catalogue and granted by owner policy may be exposed.
-- Complete claim, authenticated/encrypted transport, key lifecycle, replay protection, revocation and OTA authorization before cross-network Pocket Host integration.
-- Do not forward arbitrary public HTTP requests into DCP, GPIO or firmware administration.
-- Do not reuse device secrets as Pocket Host owner/account credentials.
-- A compromised MCU must not gain host filesystem, runtime secret, management API or unrelated device access.
-- Public website ingress and device-management ingress remain separate.
-- Preserve board pin validation and owner confirmation rules for dangerous hardware operations.
+## 3. Device capability model
 
-## 5. Integration sequence
+- ESP32-class MCUs: telemetry, sensor/actuator APIs, bounded local control, MQTT/DCP endpoint and protocol bridge where board profile supports it.
+- Smaller MCUs: constrained measurements, event production and actuator operations.
+- Raspberry Pi and other SBCs: general-purpose Linux host/gateway when the exact model and OS profile passes Pocket Host host acceptance. They are not microcontrollers.
+- No MCU is assumed to run the Pocket Host Rust website engine, arbitrary Python/Node applications or general-purpose customer workloads.
 
-1. Complete DemonCore Phase 1 hardware acceptance: verify exact board pinout, physical boot, memory/GC/filesystem margins and live transport.
-2. Complete device identity/claim and provisioning on real hardware.
-3. Complete authenticated/encrypted transport, authorization, key rotation and revocation.
-4. Complete OTA signature/rollback and fleet-hub acceptance.
-5. Freeze a versioned DCP gateway API and capability catalogue suitable for remote consumption.
-6. Implement the Pocket Host adapter with explicit enrollment, scoped capabilities, rate limits, audit and health state.
-7. Test simulator and real boards, network interruption, malicious/compromised node behaviour and revocation end-to-end.
+## 4. Trust and protocol boundary
 
-Do not skip a blocked human hardware task. CI/simulator evidence does not substitute for a physical board.
+- DCP message format is not authentication.
+- Device identity and claim must be completed before remote control.
+- Cross-network DCP requires authenticated/encrypted transport, replay protection, authorization, key rotation and revocation.
+- Every operation is allow-listed and scoped to the exact node, board profile and owner policy.
+- GPIO access must pass board-specific safe pin rules and explicit confirmation for sensitive pins.
+- Public website ingress never forwards to DCP administration, firmware update or GPIO operations.
+- Firmware and OTA metadata are signed and rollback policy is enforced.
+- Device secrets are distinct from Pocket Host owner credentials and host-agent keys.
+- A compromised MCU cannot obtain SBC host-agent privileges or another node's credentials.
 
-## 6. Current repository status snapshot (2026-11-17)
+## 5. Failure containment
 
-The current root README records:
-- ESP-WROOM-32 38-pin, 4 MiB flash, no PSRAM target with pinned MicroPython.
-- Phase 1 is not hardware-accepted; physical boot/resource checks and board pinout confirmation remain open.
-- `app/` is documentation-only and has no Flutter `pubspec.yaml` or Dart application.
-- `hub/` is not implemented.
-- DCP v1.0, simulator and firmware foundations exist, but DCP v1 itself does not authenticate traffic.
-- Claim/provisioning, transports, fleet, mesh, OTA and job work remain gated by `TASKS.md`.
+- Pocket Host mobile app unavailable: enrolled hosts and MCU gateway continue their last authorized local policy.
+- Pocket Host control plane unavailable: local gateway and existing device operation continue within bounded authorization leases.
+- DemonCore hub unavailable: unrelated Pocket Host websites and hosts continue; MCU-dependent components report degraded.
+- One MCU offline or compromised: other nodes and host services remain isolated.
+- Edge adapter failure: website ingress, runtime cells and other tunnel providers remain available.
+- Firmware update failure: MCU returns to its last known-good image where the board bootloader/update design supports rollback.
 
-Recheck the live backlog, exact commit and CI before claiming any prerequisite is complete. This snapshot is not a substitute for the current task ledger.
+## 6. Integration prerequisites
 
-## 7. Non-goals
+1. Physical board profile and pin mapping accepted for each target board.
+2. Firmware boot, memory/GC, watchdog and filesystem limits measured on real hardware.
+3. Device identity, secure claim, owner approval and revocation implemented.
+4. Authenticated/encrypted DCP transport, replay protection and bounded parsing verified.
+5. Signed OTA, rollback and interrupted-update recovery accepted.
+6. Hub/gateway deployment, resource limits and fault recovery accepted.
+7. Versioned edge capability catalogue and Pocket Host adapter implemented.
+8. End-to-end mobile pairing, authorization, telemetry, device operation and revocation tested on real hardware.
 
-- No repository merge, git submodule or copied firmware implementation.
-- No Pocket Host website engine or Python/Node runtime on ESP32 by default.
-- No unauthenticated DCP bridge or public GPIO/control endpoint.
-- No claims of fleet scale, mesh reliability, hardware compatibility or production readiness without physical and adversarial evidence.
+Simulator and CI tests do not replace physical hardware acceptance.
+
+## 7. Protocol compatibility
+
+DCP has its own protocol version and compatibility lifecycle, independent of the Pocket Host product release version 0.1.0. Pocket Host adapter declares supported DCP version ranges and rejects unknown or unsafe operations. Breaking protocol changes require negotiated compatibility and staged rollout.
+
+## 8. Non-goals
+
+- No repository merge.
+- No shared fleet-wide secret.
+- No public MCU management endpoint.
+- No arbitrary remote shell or unrestricted GPIO API.
+- No promise of general-purpose web runtime execution on microcontrollers.
+- No dependency from Pocket Host website serving on DemonCore availability.
